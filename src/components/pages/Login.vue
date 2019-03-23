@@ -45,7 +45,6 @@ export default {
   },
   methods: {
     signIn() {
-      console.log(this.username, this.password);
       const api = `${process.env.APIPATH}/admin/signin`;
       let vm = this;
       this.$http.post(api, vm.user).then(response => {
