@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
     <router-view/>
   </div>
 </template>
@@ -10,10 +9,10 @@ export default {
   name: "App",
   created() {
     // api test
-    const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`;
-    this.$http.get(api).then(response => {
-      console.log(response.data);
-    });
+    // const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/products`;
+    // this.$http.get(api).then(response => {
+    //   console.log(response.data);
+    // });
   }
 };
 </script>
@@ -21,3 +20,4 @@ export default {
 <style lang="scss">
 @import "./assets/all";
 </style>
+
