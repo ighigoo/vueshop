@@ -1,6 +1,6 @@
 <template>
   <div>
-    <form class="form-signin" @submit.prevent="signIn">
+    <form class="form-signin" @submit.prevent="signIn" @keyup.enter="signIn">
       <h1 class="h3 mb-3 font-weight-normal">請先登入</h1>
       <label for="inputEmail" class="sr-only">Email address</label>
       <input
@@ -50,7 +50,7 @@ export default {
       this.$http.post(api, vm.user).then(response => {
         console.log(response.data);
         if (response.data.success) {
-          vm.$router.push("/");
+          vm.$router.push("/admin");
         }
       });
     }

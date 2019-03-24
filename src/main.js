@@ -3,6 +3,8 @@
 import Vue from 'vue'
 import axios from 'axios'  // ajax的套件
 import VueAxios from 'vue-axios' // 轉為Vue的套件
+import 'bootstrap';
+
 import App from './App'
 import router from './router'
 
