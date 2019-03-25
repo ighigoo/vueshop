@@ -332,6 +332,9 @@ export default {
           vm.status.fileUploading = false;
           if (response.data.success) {
             vm.$set(vm.tempProduct, "imageUrl", response.data.imageUrl);
+            this.$bus.$emit("message:push", "圖片上傳成功", "success");
+          } else {
+            this.$bus.$emit("message:push", response.data.message, "danger");
           }
         });
     }
@@ -340,11 +343,6 @@ export default {
     this.getProducts();
   }
 };
-
-// todo:
-// 1. 圖片上傳 input 欄位清空
-// 2. 503error
-// 3  $set 複習
 </script>
 
 <style>

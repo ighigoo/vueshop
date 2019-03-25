@@ -15,6 +15,11 @@ export default {
     // });
   }
 };
+
+// todo:
+// 1. 圖片上傳 input 欄位清空
+// 2. 503error
+// 3  $set 複習
 </script>
 
 <style lang="scss">

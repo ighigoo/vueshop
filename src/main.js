@@ -9,11 +9,11 @@ import 'vue-loading-overlay/dist/vue-loading.css';
 
 import App from './App'
 import router from './router'
+import './bus';
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 
-//Vue.use(Loading);
 Vue.component('Loading', Loading); // 全域啟用
 
 axios.defaults.withCredentials = true;
