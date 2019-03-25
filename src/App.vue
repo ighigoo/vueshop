@@ -21,8 +21,9 @@ export default {
 // 2. 503error
 // 3  $set 複習
 
-// 4.分頁(pagination)製作成元件
-// 5.元件 套件 .js引用方式
+// 4. 分頁(pagination)製作成元件
+// 5. 元件 套件 .js引用(import)方式
+// 6. JQuery 可否全域import
 </script>
 
 <style lang="scss">

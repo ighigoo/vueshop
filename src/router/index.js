@@ -47,7 +47,7 @@ export default new Router({
     },
     {
       path: '/',
-      name: 'Dashboard',
+      name: '',
       component: Dashboard,
       children: [
         {
