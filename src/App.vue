@@ -20,6 +20,9 @@ export default {
 // 1. 圖片上傳 input 欄位清空
 // 2. 503error
 // 3  $set 複習
+
+// 4.分頁(pagination)製作成元件
+// 5.元件 套件 .js引用方式
 </script>
 
 <style lang="scss">

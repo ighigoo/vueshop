@@ -19,8 +19,8 @@
         <tr v-for="(item) in products" :key="item.id">
           <td>{{item.category}}</td>
           <td>{{item.title}}</td>
-          <td class="text-right">{{item.origin_price}}</td>
-          <td class="text-right">{{item.price}}</td>
+          <td class="text-right">{{item.origin_price | currency }}</td>
+          <td class="text-right">{{item.price | currency }}</td>
           <td>
             <span class="text-success" v-if="item.is_enabled==1">已啟用</span>
             <span class="text-danger" v-else>未啟用</span>
@@ -42,7 +42,43 @@
         </tr>
       </tbody>
     </table>
-
+    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+      <ul class="pagination">
+        <!-- 前一頁 -->
+        <li class="page-item" :class="{ 'disabled': !pagination.has_pre }">
+          <a
+            class="page-link"
+            href="#"
+            aria-label="Previous"
+            @click.prevent="getProducts(pagination.current_page - 1)"
+          >
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Previous</span>
+          </a>
+        </li>
+        <!-- 頁碼 -->
+        <li
+          class="page-item"
+          v-for="page in pagination.total_pages"
+          :key="page"
+          :class="{ 'active': pagination.current_page === page}"
+        >
+          <a class="page-link" href="#" @click.prevent="getProducts(page)">{{page}}</a>
+        </li>
+        <!-- 下一頁 -->
+        <li class="page-item" :class="{ 'disabled': !pagination.has_next }">
+          <a
+            class="page-link"
+            href="#"
+            aria-label="Next"
+            @click.prevent="getProducts(pagination.current_page + 1)"
+          >
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
     <!-- productModal 新增-->
     <div
       class="modal fade"
@@ -241,6 +277,7 @@ export default {
     return {
       products: [],
       tempProduct: {},
+      pagination: {},
       isNew: false,
       isLoading: false,
       status: {
@@ -249,15 +286,16 @@ export default {
     };
   },
   methods: {
-    getProducts() {
+    getProducts(page = 1) {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${
         process.env.CUSTOMPATH
-      }/admin/products`;
+      }/admin/products?page=${page}`;
       vm.isLoading = true;
       this.$http.get(api).then(response => {
         vm.isLoading = false;
         vm.products = response.data.products;
+        vm.pagination = response.data.pagination;
       });
     },
     openModal(isNew, item) {
