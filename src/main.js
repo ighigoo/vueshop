@@ -4,6 +4,8 @@ import Vue from 'vue'
 import axios from 'axios'  // ajax的套件
 import VueAxios from 'vue-axios' // 轉為Vue的套件
 import 'bootstrap';
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 import App from './App'
 import router from './router'
@@ -11,11 +13,15 @@ import router from './router'
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
 
+//Vue.use(Loading);
+Vue.component('Loading', Loading); // 全域啟用
+
 axios.defaults.withCredentials = true;
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+
   router,
   components: { App },
   template: '<App/>'

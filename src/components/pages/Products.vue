@@ -1,5 +1,6 @@
 <template>
   <div>
+    <loading :active.sync="isLoading"></loading>
     <div class="text-right mt-4">
       <a href="#" class="btn btn-primary" @click="openModal(true)">建立新商品</a>
     </div>
@@ -77,9 +78,15 @@
                 <div class="form-group">
                   <label for="customFile">
                     或 上傳圖片
-                    <i class="fas fa-spinner fa-spin"></i>
+                    <i class="fas fa-spinner fa-spin" v-if="status.fileUploading"></i>
                   </label>
-                  <input type="file" id="customFile" class="form-control" ref="files">
+                  <input
+                    type="file"
+                    id="customFile"
+                    class="form-control"
+                    ref="files"
+                    @change="uploadFile"
+                  >
                 </div>
                 <img
                   img="https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=828346ed697837ce808cae68d3ddc3cf&auto=format&fit=crop&w=1350&q=80"
@@ -234,7 +241,11 @@ export default {
     return {
       products: [],
       tempProduct: {},
-      isNew: false
+      isNew: false,
+      isLoading: false,
+      status: {
+        fileUploading: false
+      }
     };
   },
   methods: {
@@ -243,7 +254,9 @@ export default {
       const api = `${process.env.APIPATH}/api/${
         process.env.CUSTOMPATH
       }/admin/products`;
+      vm.isLoading = true;
       this.$http.get(api).then(response => {
+        vm.isLoading = false;
         vm.products = response.data.products;
       });
     },
@@ -291,7 +304,6 @@ export default {
       const api = `${process.env.APIPATH}/api/${
         process.env.CUSTOMPATH
       }/admin/product/${vm.tempProduct.id}`;
-      console.log(api);
       this.$http.delete(api).then(response => {
         if (response.data.success) {
           $("#delProductModal").modal("hide");
@@ -299,13 +311,40 @@ export default {
           console.log(response.data.message);
         }
       });
-      console.log("2");
+    },
+    uploadFile() {
+      const uploadedFile = this.$refs.files.files[0];
+      const vm = this;
+
+      const formData = new FormData();
+      formData.append("file-to-upload", uploadedFile);
+      const url = `${process.env.APIPATH}/api/${
+        process.env.CUSTOMPATH
+      }/admin/upload`;
+      vm.status.fileUploading = true;
+      this.$http
+        .post(url, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+        .then(response => {
+          vm.status.fileUploading = false;
+          if (response.data.success) {
+            vm.$set(vm.tempProduct, "imageUrl", response.data.imageUrl);
+          }
+        });
     }
   },
   created() {
     this.getProducts();
   }
 };
+
+// todo:
+// 1. 圖片上傳 input 欄位清空
+// 2. 503error
+// 3  $set 複習
 </script>
 
 <style>
