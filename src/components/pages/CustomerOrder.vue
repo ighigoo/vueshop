@@ -37,11 +37,15 @@
               class="btn btn-outline-secondary btn-sm"
               @click="getProduct(item.id)"
             >
-              <i class="fas fa-spinner fa-spin" v-if="item.id = status.loadingItem"></i>
+              <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingItem"></i>
               查看更多
             </button>
-            <button type="button" class="btn btn-outline-danger btn-sm ml-auto">
-              <i class="fas fa-spinner fa-spin"></i>
+            <button
+              type="button"
+              class="btn btn-outline-danger btn-sm ml-auto"
+              @click="addtoCart(item.id)"
+            >
+              <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingCart"></i>
               加到購物車
             </button>
           </div>
@@ -49,6 +53,58 @@
       </div>
       <!-- 卡片 End -->
     </div>
+
+    <!-- 購物車 -->
+    <div>
+      <table class="table">
+        <thead>
+          <th></th>
+          <th>品名</th>
+          <th>數量</th>
+          <th>單價</th>
+        </thead>
+        <tbody>
+          <tr></tr>
+          <tr v-for="item in cart.carts" :key="item.id">
+            <td class="align-middle">
+              <button
+                type="button"
+                class="btn btn-outline-danger btn-sm"
+                @click="deleteCart(item.id)"
+              >
+                <i class="far fa-trash-alt"></i>
+              </button>
+            </td>
+            <td class="align-middle">
+              {{ item.product.title }}
+              <!-- <div class="text-success" v-if="item.coupon">
+          已套用優惠券
+              </div>-->
+            </td>
+            <td class="align-middle">{{ item.qty }}/{{ item.product.unit }}</td>
+            <td class="align-middle text-right">{{ item.final_total | currency}}</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="text-right">總計</td>
+            <td class="text-right">{{ cart.total | currency}}</td>
+          </tr>
+          <tr v-if="cart.total !== cart.final_total">
+            <td colspan="3" class="text-right text-success">折扣價</td>
+            <td class="text-right text-success">{{ cart.final_total | currency}}</td>
+          </tr>
+        </tfoot>
+      </table>
+      <div class="input-group mb-3 input-group-sm">
+        <input type="text" class="form-control" placeholder="請輸入優惠碼" v-model="coupon_code">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button">套用優惠碼</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 購物車 End -->
 
     <!-- 查看更多 modal -->
     <div
@@ -90,9 +146,9 @@
             <button
               type="button"
               class="btn btn-primary"
-              @click="addtoCart(product.id, product.num)"
+              @click="addtoCart(product.id, product.num, 1)"
             >
-              <i class="fas fa-spinner fa-spin" v-if="product.id === status.loadingItem"></i>
+              <i class="fas fa-spinner fa-spin" v-if="product.id === status.loadingCartModal"></i>
               加到購物車
             </button>
           </div>
@@ -111,11 +167,15 @@ export default {
     return {
       products: [],
       product: {},
+      cart: {},
       status: {
-        loadingItem: ""
+        loadingItem: "", // 查看更多
+        loadingCart: "", // 加入購物車( 主畫面 )
+        loadingCartModal: "" // 加入購物車( 單一商品Modal )
       },
+      isLoading: false,
       pagination: {},
-      isLoading: false
+      coupon_code: ""
     };
   },
   methods: {
@@ -130,25 +190,88 @@ export default {
         vm.isLoading = false;
         vm.products = response.data.products;
         vm.pagination = response.data.pagination;
-        console.log(response.data.products);
       });
     },
     // 取得單一產品
     getProduct(id) {
-      // const vm = this;
-      // const api = `${process.env.APIPATH}/api/${
-      //   process.env.CUSTOMPATH
-      // }/product/${id}`;
-      // vm.status.loadingItem = id;
-      // this.$http.get(api).then(response => {
-      //   vm.status.loadingItem = "";
-      //   vm.product = response.data.product;
-      //   $("#productModal").modal("show");
-      // });
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${
+        process.env.CUSTOMPATH
+      }/product/${id}`;
+      vm.status.loadingItem = id;
+      this.$http.get(api).then(response => {
+        vm.status.loadingItem = "";
+        vm.product = response.data.product;
+        $("#productModal").modal("show");
+      });
+    },
+    // 加入購物車 id: 商品ID qty:數量 type:按鈕 0-主畫面 1-modal
+    addtoCart(id, qty = 1, type = 0) {
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      if (type === 0) {
+        vm.status.loadingCart = id;
+      } else {
+        vm.status.loadingCartModal = id;
+      }
+
+      const cart = {
+        product_id: id,
+        qty
+      };
+      this.$http.post(api, { data: cart }).then(response => {
+        if (response.data.success) {
+          if (type === 0) {
+            vm.status.loadingCart = "";
+          } else {
+            vm.status.loadingCartModal = "";
+          }
+          // 加入成功訊息
+        }
+      });
+    },
+    // 取得購物車列表
+    getCart() {
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      vm.isLoading = true;
+      this.$http.get(api).then(response => {
+        vm.isLoading = false;
+        vm.cart = response.data.data;
+      });
+    },
+    // 刪除購物車商品
+    deleteCart(id) {
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${
+        process.env.CUSTOMPATH
+      }/cart/${id}`;
+      vm.isLoading = true;
+      this.$http.delete(api).then(response => {
+        vm.isLoading = false;
+        vm.getCart();
+        console.log(response.data);
+      });
+    },
+    // 加入優惠碼
+    addCouponCode() {
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/coupon`;
+      const coupon = {
+        code: vm.coupon_code
+      };
+      this.$http.post(api, { data: coupon }).then(response => {
+        if (response.data.success) {
+          this.getCart();
+        } else {
+          console.log(response.data.message);
+        }
+      });
     }
   },
   created() {
     this.getProducts();
+    this.getCart();
   }
 };
 </script>
