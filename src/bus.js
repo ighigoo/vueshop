@@ -7,7 +7,9 @@ Vue.prototype.$bus = new Vue();
 // message(string): 訊息內容
 // status(string):Alert的樣式
 
-
+// Navbar
+// vm.$bus.$emit("checkLoginBus")
+//確認登入狀態
 
 
 

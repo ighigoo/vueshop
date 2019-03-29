@@ -40,7 +40,7 @@ router.beforeEach((to, from, next) => {
       }
       else {
         next({
-          path: '/login',
+          path: '/admin/login',
         });
       }
     });

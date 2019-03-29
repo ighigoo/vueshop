@@ -21,10 +21,27 @@ export default new Router({
     //   component: HelloWorld,
     //   meta: { requiresAuth: true }
     // },
+    // {
+    //   path: '/login',
+    //   name: 'Login',
+    //   component: Login
+    // },
     {
-      path: '/login',
-      name: 'Login',
-      component: Login
+      path: '/',
+      name: '',
+      component: Dashboard,
+      children: [
+        { // /#/  (預設)
+          path: '',
+          name: 'CustomerOrder',
+          component: CustomerOrder,
+        },
+        { // /#/customer_order
+          path: 'customer_order',
+          name: 'CustomerOrder',
+          component: CustomerOrder,
+        },
+      ]
     },
     {
       path: '/admin',
@@ -38,6 +55,11 @@ export default new Router({
           meta: { requiresAuth: true },
         },
         {
+          path: 'login',
+          name: 'Login',
+          component: Login
+        },
+        {
           path: 'products',
           name: 'Products',
           component: Products,
@@ -45,18 +67,7 @@ export default new Router({
         },
       ]
     },
-    {
-      path: '/',
-      name: '',
-      component: Dashboard,
-      children: [
-        {
-          path: 'customer_order',
-          name: 'CustomerOrder',
-          component: CustomerOrder,
-        },
-      ]
-    },
+
 
   ]
 })

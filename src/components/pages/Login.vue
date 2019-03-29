@@ -50,10 +50,14 @@ export default {
       this.$http.post(api, vm.user).then(response => {
         console.log(response.data);
         if (response.data.success) {
+          vm.$bus.$emit("checkLoginBus"); // 更新navbar狀態
           vm.$router.push("/admin");
         }
       });
     }
+  },
+  created() {
+    vm.$bus.$emit("checkLoginBus"); // 更新navbar狀態
   }
 };
 </script>

@@ -3,7 +3,6 @@
     <router-view/>
   </div>
 </template>
-
 <script>
 export default {
   name: "App",
@@ -15,7 +14,6 @@ export default {
     // });
   }
 };
-
 // todo:
 // 1. 圖片上傳 input 欄位清空
 // 2. 503error
