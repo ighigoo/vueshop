@@ -1,11 +1,14 @@
 <template>
   <div>
-    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-sm">
+    <nav
+      class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-sm d-flex"
+    >
       <a class="navbar-brand px-3 mr-0" href="#">
         <i class="fas fa-glass-cheers mr-2"></i>好喝飲料鋪
       </a>
+      <ShoppingCartNav class="ml-auto order-sm-1"></ShoppingCartNav>
       <button
-        class="navbar-toggler"
+        class="navbar-toggler order-sm-2"
         type="button"
         data-toggle="collapse"
         data-target="#navbarSupportedContent"
@@ -15,8 +18,9 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto">
+        <ul class="navbar-nav ml-auto p-3">
           <li class="nav-item active">
             <a class="nav-link" href="#">產品列表</a>
           </li>
@@ -35,8 +39,13 @@
 
 <script>
 import $ from "jquery";
+import ShoppingCartNav from "./ShoppingCartNav";
+
 export default {
   name: "Navbar",
+  components: {
+    ShoppingCartNav
+  },
   data() {
     return {
       isLogin: false

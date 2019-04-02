@@ -5,6 +5,10 @@ import Login from '@/components/pages/Login'
 import Dashboard from '@/components/Dashboard'
 import Products from '@/components/pages/Products'
 import CustomerOrder from '@/components/pages/CustomerOrder'
+import MainPage from '@/components/pages/MainPage'
+import ShoppingPage from '@/components/pages/ShoppingPage'
+import ShoppingList from '@/components/ShoppingList'
+
 
 Vue.use(Router)
 
@@ -29,18 +33,32 @@ export default new Router({
     {
       path: '/',
       name: '',
-      component: Dashboard,
+      component: MainPage,
       children: [
         { // /#/  (預設)
           path: '',
-          name: 'CustomerOrder',
-          component: CustomerOrder,
+          name: 'MainPage',
+          component: MainPage,
         },
-        { // /#/customer_order
-          path: 'customer_order',
-          name: 'CustomerOrder',
-          component: CustomerOrder,
+
+      ]
+    },
+    {
+      path: '/shopping',
+      name: '',
+      component: ShoppingPage,
+      children: [
+        { // /#/ShoppingPage/
+          path: '',
+          name: 'ShoppingPage',
+          component: ShoppingList,
         },
+        { // /#/ShoppingPage/ShoppingList
+          path: 'ShoppingList',
+          name: 'ShoppingList',
+          component: ShoppingList,
+        },
+
       ]
     },
     {
@@ -65,6 +83,12 @@ export default new Router({
           component: Products,
           meta: { requiresAuth: true },
         },
+        { // /#/admin/customer_order
+          path: '/customer_order',
+          name: 'CustomerOrder',
+          component: CustomerOrder,
+        },
+
       ]
     },
 

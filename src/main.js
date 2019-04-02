@@ -6,6 +6,7 @@ import VueAxios from 'vue-axios' // 轉為Vue的套件
 import 'bootstrap';
 import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
+import BootstrapVue from 'bootstrap-vue';
 
 
 import App from './App';
@@ -15,6 +16,7 @@ import currencyFilter from './filters/currency';
 
 Vue.config.productionTip = false
 Vue.use(VueAxios, axios)
+Vue.use(BootstrapVue);
 
 Vue.component('Loading', Loading); // 全域啟用
 Vue.filter('currency', currencyFilter);
