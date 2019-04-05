@@ -77,9 +77,7 @@
             </td>
             <td class="align-middle">
               {{ item.product.title }}
-              <!-- <div class="text-success" v-if="item.coupon">
-          已套用優惠券
-              </div>-->
+              <div class="text-success" v-if="item.coupon">已套用優惠券</div>
             </td>
             <td class="align-middle">{{ item.qty }}/{{ item.product.unit }}</td>
             <td class="align-middle text-right">{{ item.final_total | currency}}</td>
@@ -96,10 +94,21 @@
           </tr>
         </tfoot>
       </table>
-      <div class="input-group mb-3 input-group-sm">
-        <input type="text" class="form-control" placeholder="請輸入優惠碼" v-model="coupon_code">
+      <!-- 未使用過優惠券才顯示輸入欄位 -->
+      <div class="input-group mb-3 input-group-sm" v-if="cart.final_total === cart.total">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="請輸入優惠碼"
+          v-model="coupon_code"
+          @click.enter="addCouponCode"
+        >
         <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button">套用優惠碼</button>
+          <button
+            class="btn btn-outline-secondary"
+            type="button"
+            @click.prevent="addCouponCode"
+          >套用優惠碼</button>
         </div>
       </div>
     </div>
@@ -260,6 +269,7 @@ export default {
       const coupon = {
         code: vm.coupon_code
       };
+      console.log("123");
       this.$http.post(api, { data: coupon }).then(response => {
         if (response.data.success) {
           this.getCart();
