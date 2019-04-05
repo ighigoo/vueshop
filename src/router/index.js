@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import Login from '@/components/pages/Login'
 import Dashboard from '@/components/Dashboard'
 import Products from '@/components/pages/Products'
+import CouponsList from '@/components/pages/CouponsList'
 import CustomerOrder from '@/components/pages/CustomerOrder'
 import MainPage from '@/components/pages/MainPage'
 import ShoppingPage from '@/components/pages/ShoppingPage'
@@ -54,7 +55,7 @@ export default new Router({
           component: ShoppingList,
         },
         { // /#/ShoppingPage/ShoppingList
-          path: 'ShoppingList',
+          path: 'Shopping_list',
           name: 'ShoppingList',
           component: ShoppingList,
         },
@@ -81,6 +82,12 @@ export default new Router({
           path: 'products',
           name: 'Products',
           component: Products,
+          meta: { requiresAuth: true },
+        },
+        {
+          path: 'coupons_list',
+          name: 'CouponsList',
+          component: CouponsList,
           meta: { requiresAuth: true },
         },
         { // /#/admin/customer_order

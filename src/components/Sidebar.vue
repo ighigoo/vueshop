@@ -15,6 +15,11 @@
               <i class="fas fa-box-open mr-1"></i>產品列表
             </router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/admin/coupons_list">
+              <i class="fas fa-box-open mr-1"></i>折扣碼列表
+            </router-link>
+          </li>
         </ul>
 
         <h6

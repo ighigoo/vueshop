@@ -134,8 +134,8 @@
               <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
               <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
             </div>
-            <select name class="form-control mt-3" v-model="product.num">
-              <option value disabled selected>請選擇數量</option>
+            <select name class="form-control mt-3" v-model="product.num" v-if="product.id">
+              <option value="0" disabled selected hidden>請選擇數量</option>
               <option v-for="(num) in 10" :value="num" :key="num">選購 {{num}} {{product.unit}}</option>
             </select>
           </div>
@@ -204,7 +204,8 @@ export default {
         loadingCartModal: "" // 加入購物車( 單一商品Modal )
       },
       isLoading: false,
-      pagination: {}
+      pagination: {},
+      defaultNum: ""
     };
   },
   methods: {
@@ -230,7 +231,10 @@ export default {
       vm.status.loadingItem = id;
       this.$http.get(api).then(response => {
         vm.status.loadingItem = "";
+        console.log(response.data.product);
         vm.product = response.data.product;
+        console.log(vm.product.num);
+        vm.product.num = 0;
         $("#productModal").modal("show");
       });
     },
