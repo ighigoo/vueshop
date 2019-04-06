@@ -111,9 +111,78 @@
           >套用優惠碼</button>
         </div>
       </div>
-    </div>
 
-    <!-- 購物車 End -->
+      <!-- 訂購資訊 -->
+      <h5 class="py-3 mt-5 mb-2 text-center bg-light">訂購人資訊</h5>
+      <form id="needs-validation" novalidate @submit.prevent="CreateOrder">
+        <!-- 姓名 -->
+        <div class="form-row">
+          <div class="form-group col-md-8 mx-auto">
+            <label for="username">姓名</label>
+            <input
+              type="text"
+              class="form-control"
+              :class="{'is-invalid' : errors.has('name')}"
+              id="username"
+              placeholder="請輸入姓名"
+              name="name"
+              v-model="form.user.name"
+              v-validate="'required'"
+            >
+            <span class="text-danger" v-if="errors.has('name')">請輸入姓名</span>
+          </div>
+          <!-- Email -->
+          <div class="form-group col-md-8 mx-auto">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              :class="{'is-invalid' : errors.has('email')}"
+              id="email"
+              placeholder="請輸入Email"
+              name="email"
+              v-model="form.user.email"
+              v-validate="'required|email'"
+            >
+            <span class="text-danger" v-if="errors.has('email')">{{errors.first('email')}}</span>
+          </div>
+          <!-- 手機號碼 -->
+          <div class="form-group col-md-8 mx-auto">
+            <label for="tel">手機號碼</label>
+            <input
+              type="text"
+              class="form-control"
+              :class="{'is-invalid' : errors.has('tel')}"
+              id="tel"
+              placeholder="請輸入手機號碼"
+              name="tel"
+              v-model="form.user.tel"
+              v-validate="'required|digits:10'"
+            >
+            <span class="text-danger" v-if="errors.has('tel')">請輸入手機號碼</span>
+          </div>
+          <div class="form-group col-md-8 mx-auto">
+            <label for="address">地址</label>
+            <input
+              type="text"
+              class="form-control"
+              :class="{'is-invalid' : errors.has('address')}"
+              id="address"
+              placeholder="請輸入地址"
+              name="address"
+              v-model="form.user.address"
+              v-validate="'required'"
+            >
+            <span class="text-danger" v-if="errors.has('address')">請輸入地址</span>
+          </div>
+        </div>
+        <div class="text-right">
+          <a href="shoppingCart.html" class="btn btn-secondary">繼續選購</a>
+          <button type="submit" class="btn btn-primary">確認付款</button>
+          <!-- <a href="shoppingCart-purchase.html" class="btn btn-primary">確認付款</a> -->
+        </div>
+      </form>
+    </div>
 
     <!-- 查看更多 modal -->
     <div
@@ -177,6 +246,15 @@ export default {
       products: [],
       product: {},
       cart: {},
+      form: {
+        user: {
+          name: "",
+          email: "",
+          tel: "",
+          address: ""
+        },
+        message: ""
+      },
       status: {
         loadingItem: "", // 查看更多
         loadingCart: "", // 加入購物車( 主畫面 )
@@ -269,12 +347,35 @@ export default {
       const coupon = {
         code: vm.coupon_code
       };
-      console.log("123");
       this.$http.post(api, { data: coupon }).then(response => {
         if (response.data.success) {
           this.getCart();
         } else {
           console.log(response.data.message);
+        }
+      });
+    },
+    // 建立訂單
+    CreateOrder() {
+      const vm = this;
+      const order = vm.form;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order`;
+      // 驗證
+      this.$validator.validate().then(valid => {
+        if (valid) {
+          // 訂單API
+          vm.isLoading = true;
+          this.$http.post(api, { data: order }).then(response => {
+            if (response.data.success) {
+              console.log(response.data.message);
+              this.getCart();
+              vm.isLoading = false;
+            } else {
+              console.log(response.data.message);
+            }
+          });
+        } else {
+          console.log("請填寫訂購人資訊");
         }
       });
     }
