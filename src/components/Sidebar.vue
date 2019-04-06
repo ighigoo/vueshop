@@ -17,7 +17,12 @@
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/admin/coupons_list">
-              <i class="fas fa-box-open mr-1"></i>折扣碼列表
+              <i class="fas fa-money-bill mr-1"></i>折扣碼列表
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/admin/order_list">
+              <i class="fas fa-file-invoice-dollar mr-2"></i>訂單列表
             </router-link>
           </li>
         </ul>

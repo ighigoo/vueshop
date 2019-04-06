@@ -5,6 +5,7 @@ import Login from '@/components/pages/Login'
 import Dashboard from '@/components/Dashboard'
 import Products from '@/components/pages/Products'
 import CouponsList from '@/components/pages/CouponsList'
+import OrderList from '@/components/pages/OrderList'
 import CustomerOrder from '@/components/pages/CustomerOrder'
 import MainPage from '@/components/pages/MainPage'
 import ShoppingPage from '@/components/pages/ShoppingPage'
@@ -88,6 +89,12 @@ export default new Router({
           path: 'coupons_list',
           name: 'CouponsList',
           component: CouponsList,
+          meta: { requiresAuth: true },
+        },
+        {
+          path: 'order_list',
+          name: 'OrderList',
+          component: OrderList,
           meta: { requiresAuth: true },
         },
         { // /#/admin/customer_order
