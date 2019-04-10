@@ -213,6 +213,8 @@
               <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
             </div>
             <select name class="form-control mt-3" v-model="product.num">
+              <option value="0" disabled selected hidden>請選擇數量</option>
+
               <option :value="num" v-for="num in 10" :key="num">選購 {{num}} {{product.unit}}</option>
             </select>
           </div>
@@ -289,6 +291,7 @@ export default {
       this.$http.get(api).then(response => {
         vm.status.loadingItem = "";
         vm.product = response.data.product;
+        vm.product.num = 0;
         $("#productModal").modal("show");
       });
     },
@@ -296,6 +299,8 @@ export default {
     addtoCart(id, qty = 1, type = 0) {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      const apiJsonServer = `${process.env.JSONSERVERPATH}/carts`;
+      console.log(apiJsonServer);
       if (type === 0) {
         vm.status.loadingCart = id;
       } else {
@@ -314,6 +319,23 @@ export default {
             vm.status.loadingCartModal = "";
           }
           // 加入成功訊息
+          const result = response.data.data;
+          // 客制資料上傳
+          const cartM = {
+            cart_id: result.id,
+            product_id: result.product_id,
+            qty: result.qty,
+            detail: {
+              ice: 0,
+              sweet: 0,
+              size: 0,
+              add: []
+            }
+          };
+          this.$http.post(apiJsonServer, cartM).then(response => {});
+
+          // 重新取得nav購物車資料
+          vm.$bus.$emit("cartNav:reflash");
         }
       });
     },

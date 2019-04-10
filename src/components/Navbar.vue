@@ -3,9 +3,12 @@
     <nav
       class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-sm d-flex"
     >
-      <a class="navbar-brand px-3 mr-0" href="#">
+      <!-- <a class="navbar-brand px-3 mr-0" href="#">
         <i class="fas fa-glass-cheers mr-2"></i>好喝飲料鋪
-      </a>
+      </a>-->
+      <router-link class="navbar-brand px-3 mr-0" to="/">
+        <i class="fas fa-glass-cheers mr-2"></i>好喝飲料鋪
+      </router-link>
       <ShoppingCartNav class="ml-auto order-sm-1"></ShoppingCartNav>
       <button
         class="navbar-toggler order-sm-2"
@@ -21,8 +24,11 @@
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto p-3">
-          <li class="nav-item active">
+          <!-- <li class="nav-item active">
             <a class="nav-link" href="#">產品列表</a>
+          </li>-->
+          <li class="nav-item active">
+            <router-link class="nav-link" to="/Shopping/Shopping_List">產品列表</router-link>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#">訂單查詢</a>

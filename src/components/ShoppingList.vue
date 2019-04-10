@@ -135,14 +135,14 @@
               <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
             </div>
             <select name class="form-control mt-3" v-model="product.num" v-if="product.id">
-              <option value="0" disabled selected hidden>請選擇數量</option>
+              <!-- <option value disabled selected hidden>請選擇數量</option> -->
               <option v-for="(num) in 10" :value="num" :key="num">選購 {{num}} {{product.unit}}</option>
             </select>
           </div>
           <div class="modal-footer">
             <div class="text-muted text-nowrap mr-3">
               小計
-              <strong>{{ product.num * product.price || 0}}</strong> 元
+              <strong>{{ product.num * product.price }}</strong> 元
             </div>
             <button
               type="button"
@@ -231,10 +231,8 @@ export default {
       vm.status.loadingItem = id;
       this.$http.get(api).then(response => {
         vm.status.loadingItem = "";
-        console.log(response.data.product);
+        response.data.product.num = 1;
         vm.product = response.data.product;
-        console.log(vm.product.num);
-        vm.product.num = 0;
         $("#productModal").modal("show");
       });
     },
@@ -260,6 +258,9 @@ export default {
             vm.status.loadingCartModal = "";
           }
           // 加入成功訊息
+          // 重新取得nav購物車資料
+          vm.$bus.$emit("cartNav:reflash");
+          $("#productModal").modal("hide");
         }
       });
     },
@@ -279,6 +280,10 @@ export default {
           return item.category === vm.listNow;
         });
       }
+    },
+    productTotalPrice() {
+      const vm = this;
+      return vm.product.num * vm.product.price;
     }
   },
   created() {

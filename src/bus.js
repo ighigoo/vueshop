@@ -9,9 +9,11 @@ Vue.prototype.$bus = new Vue();
 
 // Navbar
 // vm.$bus.$emit("checkLoginBus")
-//確認登入狀態
+// 確認登入狀態
 
-
+// ShoppingCartNav
+// vm.$bus.$emit("cartNav:reflash")
+// 重新取得購物車資料
 
 
 

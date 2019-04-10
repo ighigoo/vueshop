@@ -55,7 +55,7 @@ export default new Router({
           name: 'ShoppingPage',
           component: ShoppingList,
         },
-        { // /#/ShoppingPage/ShoppingList
+        { // /#/Shopping/Shopping_List
           path: 'Shopping_list',
           name: 'ShoppingList',
           component: ShoppingList,
