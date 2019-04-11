@@ -70,13 +70,19 @@
               <button
                 type="button"
                 class="btn btn-outline-danger btn-sm"
-                @click="deleteCart(item.id)"
+                @click="deleteCart(item.id,item.detailId)"
               >
                 <i class="far fa-trash-alt"></i>
               </button>
             </td>
             <td class="align-middle">
-              {{ item.product.title }}
+              {{ item.product.title }} ({{ detailSetting.size[item.detail.size] }})
+              <!-- <span>{{ detailSetting[item.detail.ice] }}</span> -->
+              <span class="h6 text-danger font-detail">
+                {{ detailSetting.ice[item.detail.ice] }} ,
+                {{ detailSetting.sweet[item.detail.sweet] }}
+              </span>
+
               <div class="text-success" v-if="item.coupon">已套用優惠券</div>
             </td>
             <td class="align-middle">{{ item.qty }}/{{ item.product.unit }}</td>
@@ -212,6 +218,62 @@
               <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
               <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
             </div>
+            <div class="d-flex justify-content-between my-1">
+              <div class="btn-group" role="group" aria-label="iceBtn">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.iceBtn===0}"
+                  @click="productMod.iceBtn=0"
+                >正常</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.iceBtn===1}"
+                  @click="productMod.iceBtn=1"
+                >少冰</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.iceBtn===2}"
+                  @click="productMod.iceBtn=2"
+                >去冰</button>
+              </div>
+              <div class="btn-group" role="group" aria-label="sweetBtn">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sweetBtn===0}"
+                  @click="productMod.sweetBtn=0"
+                >正常</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sweetBtn===1}"
+                  @click="productMod.sweetBtn=1"
+                >少糖</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sweetBtn===2}"
+                  @click="productMod.sweetBtn=2"
+                >無糖</button>
+              </div>
+              <div class="btn-group" role="group" aria-label="sizeBtn">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sizeBtn===0}"
+                  @click="productMod.sizeBtn=0"
+                >M</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sizeBtn===1}"
+                  @click="productMod.sizeBtn=1"
+                >L</button>
+              </div>
+            </div>
             <select name class="form-control mt-3" v-model="product.num">
               <option value="0" disabled selected hidden>請選擇數量</option>
 
@@ -247,6 +309,11 @@ export default {
     return {
       products: [],
       product: {},
+      productMod: {
+        iceBtn: 0, // 0正常 1少冰 2去冰
+        sweetBtn: 0, // 0正常 1少糖 2無糖
+        sizeBtn: 0 // 0M 1L
+      },
       cart: {},
       form: {
         user: {
@@ -264,7 +331,12 @@ export default {
       },
       isLoading: false,
       pagination: {},
-      coupon_code: ""
+      coupon_code: "",
+      detailSetting: {
+        ice: ["正常冰", "少冰", "去冰"],
+        sweet: ["正常糖", "少糖", "無糖"],
+        size: ["M", "L"]
+      }
     };
   },
   methods: {
@@ -299,8 +371,8 @@ export default {
     addtoCart(id, qty = 1, type = 0) {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
-      const apiJsonServer = `${process.env.JSONSERVERPATH}/carts`;
-      console.log(apiJsonServer);
+      const apiDetail = `${process.env.DETAILAPIPATH}/carts`;
+
       if (type === 0) {
         vm.status.loadingCart = id;
       } else {
@@ -310,6 +382,13 @@ export default {
       const cart = {
         product_id: id,
         qty
+      };
+
+      const detail = {
+        ice: vm.productMod.iceBtn,
+        sweet: vm.productMod.sweetBtn,
+        size: vm.productMod.sizeBtn,
+        add: []
       };
       this.$http.post(api, { data: cart }).then(response => {
         if (response.data.success) {
@@ -325,17 +404,13 @@ export default {
             cart_id: result.id,
             product_id: result.product_id,
             qty: result.qty,
-            detail: {
-              ice: 0,
-              sweet: 0,
-              size: 0,
-              add: []
-            }
+            detail
           };
-          this.$http.post(apiJsonServer, cartM).then(response => {});
+          this.$http.post(apiDetail, cartM).then(response => {});
 
           // 重新取得nav購物車資料
           vm.$bus.$emit("cartNav:reflash");
+          vm.getCart();
         }
       });
     },
@@ -343,22 +418,46 @@ export default {
     getCart() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      const apiDetail = `${process.env.DETAILAPIPATH}/carts`;
       vm.isLoading = true;
       this.$http.get(api).then(response => {
-        vm.isLoading = false;
         vm.cart = response.data.data;
+
+        // get detail
+        this.$http.get(apiDetail).then(response => {
+          const detailCarts = response.data; // detail array
+          // vm.cart 跑foreach 和 detail 比對cart_id
+          vm.cart.carts.forEach((cartItem, index) => {
+            let detailItem = detailCarts.find(item => {
+              return item.cart_id === cartItem.id;
+            });
+
+            // 比對成功將detailId和detail{}加入cart.carts
+            this.$set(this.cart.carts[index], "detailId", detailItem.id);
+            this.$set(this.cart.carts[index], "detail", detailItem.detail);
+            vm.isLoading = false;
+          });
+        });
       });
     },
     // 刪除購物車商品
-    deleteCart(id) {
+    deleteCart(id, detailId) {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${
         process.env.CUSTOMPATH
       }/cart/${id}`;
+
+      // 傳入參數增加detailId
+      const apiDetail = `${process.env.DETAILAPIPATH}/carts/${detailId} `;
+
       vm.isLoading = true;
       this.$http.delete(api).then(response => {
+        //刪除detail
+        this.$http.delete(apiDetail).then(response => {});
         vm.isLoading = false;
         vm.getCart();
+        // 重新取得nav購物車資料
+        vm.$bus.$emit("cartNav:reflash");
         console.log(response.data);
       });
     },
@@ -410,4 +509,7 @@ export default {
 </script>
 
 <style>
+.font-detail {
+  font-size: 0.5rem;
+}
 </style>
