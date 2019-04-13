@@ -10,7 +10,7 @@ import CustomerOrder from '@/components/pages/CustomerOrder'
 import MainPage from '@/components/pages/MainPage'
 import ShoppingPage from '@/components/pages/ShoppingPage'
 import ShoppingList from '@/components/ShoppingList'
-
+import Order from '@/components/Order'
 
 Vue.use(Router)
 
@@ -59,6 +59,11 @@ export default new Router({
           path: 'Shopping_list',
           name: 'ShoppingList',
           component: ShoppingList,
+        },
+        { // /#/Shopping/Order
+          path: 'Order',
+          name: 'Order',
+          component: Order,
         },
 
       ]

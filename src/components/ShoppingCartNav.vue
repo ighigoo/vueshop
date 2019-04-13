@@ -58,7 +58,7 @@
           </tr>
         </tfoot>
       </table>
-      <router-link class="btn btn-primary w-100 text-center" to="/admin/coupons_list">結帳去</router-link>
+      <router-link class="btn btn-primary w-100 text-center" to="/Shopping/Order">結帳去</router-link>
 
       <!-- 未使用過優惠券才顯示輸入欄位 -->
       <!-- <div class="input-group mb-3 input-group-sm" v-if="cart.final_total === cart.total">
