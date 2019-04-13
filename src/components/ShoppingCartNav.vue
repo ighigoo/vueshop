@@ -25,13 +25,21 @@
               <button
                 type="button"
                 class="btn btn-outline-danger btn-sm"
-                @click="deleteCart(item.id)"
+                @click="deleteCart(item.id,item.detailId)"
               >
-                <i class="far fa-trash-alt"></i>
+                <i class="fas fa-spinner fa-spin" v-if="item.id === loadingItem"></i>
+                <i class="far fa-trash-alt" v-else></i>
               </button>
             </td>
             <td class="align-middle">
               {{ item.product.title }}
+              ({{ detailSetting.size[item.detail.size] }})
+              <span
+                class="h6 text-danger font-detail"
+              >
+                {{ detailSetting.ice[item.detail.ice] }} ,
+                {{ detailSetting.sweet[item.detail.sweet] }}
+              </span>
               <div class="text-success" v-if="item.coupon">已套用優惠券</div>
             </td>
             <td class="align-middle">{{ item.qty }}/{{ item.product.unit }}</td>
@@ -81,7 +89,14 @@ export default {
       cart: {
         carts: []
       },
-      isLoading: false,
+
+      detailSetting: {
+        ice: ["正常冰", "少冰", "去冰"],
+        sweet: ["正常糖", "少糖", "無糖"],
+        size: ["M", "L"]
+      },
+      loadingItem: "false",
+
       coupon_code: ""
     };
   },
@@ -90,23 +105,49 @@ export default {
     getCart() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      const apiDetail = `${process.env.DETAILAPIPATH}/carts`;
       vm.isLoading = true;
       this.$http.get(api).then(response => {
-        vm.isLoading = false;
         vm.cart = response.data.data;
+
+        // get detail
+        this.$http.get(apiDetail).then(response => {
+          const detailCarts = response.data; // detail array
+          // vm.cart 跑foreach 和 detail 比對cart_id
+          vm.cart.carts.forEach((cartItem, index) => {
+            let detailItem = detailCarts.find(item => {
+              return item.cart_id === cartItem.id;
+            });
+
+            // 比對成功將detailId和detail{}加入cart.carts
+            this.$set(this.cart.carts[index], "detailId", detailItem.id);
+            this.$set(this.cart.carts[index], "detail", detailItem.detail);
+            vm.isLoading = false;
+          });
+        });
       });
     },
     // 刪除購物車商品
-    deleteCart(id) {
+    deleteCart(id, detailId) {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${
         process.env.CUSTOMPATH
       }/cart/${id}`;
-      vm.isLoading = true;
+
+      // 傳入參數增加detailId
+      const apiDetail = `${process.env.DETAILAPIPATH}/carts/${detailId} `;
+
+      vm.loadingItem = id;
       this.$http.delete(api).then(response => {
-        vm.isLoading = false;
-        vm.getCart();
-        console.log(response.data);
+        //刪除detail
+        this.$http.delete(apiDetail).then(response => {
+          vm.getCart();
+          // vm.loadingItem = "";
+          // 重新取得nav購物車資料
+          // vm.$bus.$emit("cartNav:reflash");
+
+          console.log(response.data);
+        });
       });
     }
     // 加入優惠碼
@@ -158,5 +199,8 @@ $(function() {
   position: relative;
   top: -15px;
   right: 10px;
+}
+.font-detail {
+  font-size: 0.5rem;
 }
 </style>

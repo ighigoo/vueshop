@@ -218,6 +218,7 @@
               <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
               <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
             </div>
+            <!-- 客制btn -->
             <div class="d-flex justify-content-between my-1">
               <div class="btn-group" role="group" aria-label="iceBtn">
                 <button

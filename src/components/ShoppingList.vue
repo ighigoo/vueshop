@@ -134,6 +134,62 @@
               <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
               <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
             </div>
+            <div class="d-flex justify-content-between my-1">
+              <div class="btn-group" role="group" aria-label="iceBtn">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.iceBtn===0}"
+                  @click="productMod.iceBtn=0"
+                >正常</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.iceBtn===1}"
+                  @click="productMod.iceBtn=1"
+                >少冰</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.iceBtn===2}"
+                  @click="productMod.iceBtn=2"
+                >去冰</button>
+              </div>
+              <div class="btn-group" role="group" aria-label="sweetBtn">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sweetBtn===0}"
+                  @click="productMod.sweetBtn=0"
+                >正常</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sweetBtn===1}"
+                  @click="productMod.sweetBtn=1"
+                >少糖</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sweetBtn===2}"
+                  @click="productMod.sweetBtn=2"
+                >無糖</button>
+              </div>
+              <div class="btn-group" role="group" aria-label="sizeBtn">
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sizeBtn===0}"
+                  @click="productMod.sizeBtn=0"
+                >M</button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  :class="{active: productMod.sizeBtn===1}"
+                  @click="productMod.sizeBtn=1"
+                >L</button>
+              </div>
+            </div>
             <select name class="form-control mt-3" v-model="product.num" v-if="product.id">
               <!-- <option value disabled selected hidden>請選擇數量</option> -->
               <option v-for="(num) in 10" :value="num" :key="num">選購 {{num}} {{product.unit}}</option>
@@ -167,6 +223,11 @@ export default {
     return {
       products: [], // 商品列表
       product: {}, // 查看更多
+      productMod: {
+        iceBtn: 0, // 0正常 1少冰 2去冰
+        sweetBtn: 0, // 0正常 1少糖 2無糖
+        sizeBtn: 0 // 0M 1L
+      },
       lists: [
         {
           type: "all",
@@ -240,16 +301,32 @@ export default {
     addtoCart(id, qty = 1, type = 0) {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      const apiDetail = `${process.env.DETAILAPIPATH}/carts`;
+
+      let detail = {
+        ice: 0,
+        sweet: 0,
+        size: 0,
+        add: []
+      };
+
       if (type === 0) {
         vm.status.loadingCart = id;
       } else {
         vm.status.loadingCartModal = id;
+        detail = {
+          ice: vm.productMod.iceBtn,
+          sweet: vm.productMod.sweetBtn,
+          size: vm.productMod.sizeBtn,
+          add: []
+        };
       }
 
       const cart = {
         product_id: id,
         qty
       };
+
       this.$http.post(api, { data: cart }).then(response => {
         if (response.data.success) {
           if (type === 0) {
@@ -258,12 +335,23 @@ export default {
             vm.status.loadingCartModal = "";
           }
           // 加入成功訊息
-          // 重新取得nav購物車資料
-          vm.$bus.$emit("cartNav:reflash");
-          $("#productModal").modal("hide");
+          const result = response.data.data;
+          // 客制資料上傳
+          const cartM = {
+            cart_id: result.id,
+            product_id: result.product_id,
+            qty: result.qty,
+            detail
+          };
+          this.$http.post(apiDetail, cartM).then(response => {
+            // 重新取得nav購物車資料
+            vm.$bus.$emit("cartNav:reflash");
+            vm.getCart();
+          });
         }
       });
     },
+    // 分類列表點擊
     listClick(item) {
       this.listNow = item.typeName;
     }
@@ -280,10 +368,6 @@ export default {
           return item.category === vm.listNow;
         });
       }
-    },
-    productTotalPrice() {
-      const vm = this;
-      return vm.product.num * vm.product.price;
     }
   },
   created() {
