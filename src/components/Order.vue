@@ -15,6 +15,7 @@
       <!-- 購物車 -->
       <section class="row justify-content-center mt-5">
         <div class="col-md-8">
+          <TurnTable></TurnTable>
           <!-- 總金額 -->
           <div class="card">
             <div class="card-header" id="headingOne">
@@ -173,7 +174,11 @@
 
 <script>
 import $ from "jquery";
+import TurnTable from "./TurnTable";
 export default {
+  components: {
+    TurnTable
+  },
   data() {
     return {
       cart: {},
