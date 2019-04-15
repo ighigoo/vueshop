@@ -1,7 +1,12 @@
 <template>
   <div>
     <div class="turntable">
-      <div class="turntable__table" id="turntable">
+      <div
+        class="turntable__table"
+        :class="{'turntable__table--turning': isRunning}"
+        id="turntable"
+        ref="turntable"
+      >
         <div class="turntable__bg">
           <div class="turntable__bg-block"></div>
           <div class="turntable__bg-block"></div>
@@ -19,7 +24,7 @@
           </li>
         </ul>
       </div>
-      <div class="pointer disabled" id="turntable_pointer">
+      <div class="pointer disabled" id="turntable_pointer" @click.prevent="startTurning">
         <div class="pointer__triangle"></div>
         <div class="pointer__circle">
           <span class="pointer__text">抽獎</span>
@@ -30,13 +35,80 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      coupons: [
+        {
+          id: "", // 優惠券ID
+          percent: 100, // 折價百分比
+          title: "", // 優惠券名稱
+          //中獎範圍(角度)
+          degrees: {
+            from: 0,
+            to: 0
+          }
+        }
+      ],
+      // 每個優惠券所占角度( 360 / coupons.length )
+      degreePerCoupon: 0,
+      turnTable: {
+        nowDegree: 0,
+        targetDeg: 3690
+      },
+
+      isRunning: false
+    };
+  },
+  methods: {
+    startTurning() {
+      const vm = this;
+
+      vm.isRunning = true;
+      vm.updateTurntableStatus();
+      vm.turnTable.nowDegree = vm.turnTable.targetDeg;
+      setTimeout(() => {
+        vm.updateTurntableStatus();
+        vm.isRunning = false;
+      }, 2000);
+    },
+    updateTurntableStatus() {
+      const vm = this;
+      document.documentElement.style.setProperty(
+        "--targetDeg",
+        `${vm.turnTable.targetDeg}deg`
+      );
+      document.documentElement.style.setProperty(
+        "--nowDeg",
+        `${vm.turnTable.nowDegree}deg`
+      );
+    }
+  },
+  create() {
+    this.updateTurntableStatus();
+  }
+};
 </script>
 
 <style lang="scss">
 @import "~bootstrap/scss/functions";
 @import "../assets/helpers/variables";
 //#e4c6d0
+
+//轉盤變數
+$targetDeg: var(--targetDeg);
+$nowDeg: var(--nowDeg);
+$tempDeg: 50deg;
+
+@keyframes turnTable {
+  0% {
+    transform: rotate($nowDeg);
+  }
+  100% {
+    transform: rotate($targetDeg);
+  }
+}
+
 .turntable {
   position: relative;
   top: 0;
@@ -48,8 +120,7 @@ export default {};
   border: 7px solid $blue;
   border-radius: 50%;
   box-shadow: 0 0 20px #b2a98d;
-  &__bg {
-  }
+
   &__table {
     position: absolute;
     top: -7px;
@@ -57,6 +128,10 @@ export default {};
     background-color: aqua;
     width: 20rem;
     height: 20rem;
+    transform: rotate($nowDeg);
+    &--turning {
+      animation: turnTable 2s cubic-bezier(0.08, 0.67, 0.61, 0.96);
+    }
   }
   &__list,
   &__bg {
