@@ -34,15 +34,39 @@
   </div>
 </template>
 
+ 
+
 <script>
 export default {
   data() {
     return {
+      //300 60, 60 180, 180 300 順
+      //60 300, 300 180, 180 60 逆
       coupons: [
         {
-          id: "", // 優惠券ID
+          code: "666666", // 優惠券代碼
+          percent: 66, // 折價百分比
+          title: "六六六", // 優惠券名稱
+          //中獎範圍(角度)
+          degrees: {
+            from: 0,
+            to: 0
+          }
+        },
+        {
+          code: "C8763", // 優惠券代碼
+          percent: 87, // 折價百分比
+          title: "星爆爆", // 優惠券名稱
+          //中獎範圍(角度)
+          degrees: {
+            from: 0,
+            to: 0
+          }
+        },
+        {
+          code: "", // 優惠券代碼
           percent: 100, // 折價百分比
-          title: "", // 優惠券名稱
+          title: "銘謝惠顧", // 優惠券名稱
           //中獎範圍(角度)
           degrees: {
             from: 0,
@@ -54,7 +78,8 @@ export default {
       degreePerCoupon: 0,
       turnTable: {
         nowDegree: 0,
-        targetDeg: 3690
+        targetDeg: 3690,
+        rotatNum: 10 // 旋轉圈數
       },
 
       isRunning: false
@@ -64,28 +89,79 @@ export default {
     startTurning() {
       const vm = this;
 
-      vm.isRunning = true;
+      // randomDeg : 亂數產生0-360
+      const randomDeg = Math.floor(Math.random() * (360 - 0));
+      // targetDeg += 360 * rotatNum 即總旋轉度數
+      // 順時針旋轉
+      vm.turnTable.targetDeg = randomDeg + vm.turnTable.rotatNum * 360;
+      // console.log(vm.turnTable.targetDeg % 360);
+      // 更新轉盤資訊
       vm.updateTurntableStatus();
-      vm.turnTable.nowDegree = vm.turnTable.targetDeg;
+      vm.isRunning = true;
+
       setTimeout(() => {
+        // 旋轉結束時的角度資訊
+        vm.turnTable.nowDegree = vm.turnTable.targetDeg % 360;
+        // 更新轉盤資訊(固定結束畫面)
         vm.updateTurntableStatus();
+        // 中獎優惠券
+        vm.getResulrCoupon();
         vm.isRunning = false;
       }, 2000);
     },
+
+    //300 60, 60 180, 180 300 順
+    //60 300, 300 180, 180 60 逆
+    //計算中獎優惠券
+    getResulrCoupon() {
+      const vm = this;
+      const resultDeg = vm.turnTable.nowDegree;
+      const resultCoupon = vm.coupons.find(item => {
+        // 第一筆優惠券區間會經過0deg
+        if (item.degrees.to > item.degrees.from) {
+          // 0~60deg || 300deg~0deg
+          return (
+            (resultDeg <= item.degrees.from && resultDeg >= 0) ||
+            (resultDeg > item.degrees.to && resultDeg <= 360)
+          );
+        } else {
+          return resultDeg <= item.degrees.from && resultDeg > item.degrees.to;
+        }
+      });
+      console.log(resultCoupon.title);
+    },
+
+    // 更新轉盤角度資訊
     updateTurntableStatus() {
       const vm = this;
+      //目標位置
       document.documentElement.style.setProperty(
         "--targetDeg",
         `${vm.turnTable.targetDeg}deg`
       );
+      //目前(起始)位置
       document.documentElement.style.setProperty(
         "--nowDeg",
         `${vm.turnTable.nowDegree}deg`
       );
+    },
+    // 設定每個優惠券中獎角度(區間)
+    couponsDegreeSetting() {
+      const vm = this;
+      vm.degreePerCoupon = 360 / vm.coupons.length;
+      // 獎品角度起始位置
+      let fromDeg = 0 + vm.degreePerCoupon / 2;
+
+      vm.coupons.forEach(item => {
+        item.degrees.from = fromDeg;
+        // +360 避免負數
+        item.degrees.to = (fromDeg - vm.degreePerCoupon + 360) % 360;
+        fromDeg = item.degrees.to;
+      });
     }
   },
-  create() {
-    this.updateTurntableStatus();
+  created() {
+    this.couponsDegreeSetting();
   }
 };
 </script>
