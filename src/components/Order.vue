@@ -15,7 +15,6 @@
       <!-- 購物車 -->
       <section class="row justify-content-center mt-5">
         <div class="col-md-8">
-          <TurnTable></TurnTable>
           <!-- 總金額 -->
           <div class="card">
             <div class="card-header" id="headingOne">
@@ -79,8 +78,12 @@
                 </tr>
               </tfoot>
             </table>
-            <!-- 未使用過優惠券才顯示輸入欄位 -->
-            <div class="input-group mb-3 input-group-sm" v-if="cart.final_total === cart.total">
+            <!-- 未使用過優惠券才顯示輸入欄位/轉盤 -->
+            <!-- 轉盤 -->
+            <div class="d-flex justify-content-center">
+              <TurnTable @getCoupon="getTurntableCoupon" v-if="cart.final_total === cart.total"></TurnTable>
+            </div>
+            <!-- <div class="input-group mb-3 input-group-sm" v-if="cart.final_total === cart.total">
               <input
                 type="text"
                 class="form-control"
@@ -95,7 +98,7 @@
                   @click.prevent="addCouponCode"
                 >套用優惠碼</button>
               </div>
-            </div>
+            </div>-->
           </div>
           <h5 class="py-3 mt-5 mb-2 text-center bg-light">訂購人資訊</h5>
           <!-- 訂購表單 -->
@@ -173,6 +176,8 @@
 </template>
 
 <script>
+// TODO:
+
 import $ from "jquery";
 import TurnTable from "./TurnTable";
 export default {
@@ -193,7 +198,7 @@ export default {
       },
 
       loadingItem: "",
-      coupon_code: "",
+      couponCode: "",
       detailSetting: {
         ice: ["正常冰", "少冰", "去冰"],
         sweet: ["正常糖", "少糖", "無糖"],
@@ -245,16 +250,21 @@ export default {
           vm.getCart();
           // 重新取得nav購物車資料
           vm.$bus.$emit("cartNav:reflash");
-          console.log(response.data);
+          //console.log(response.data);
         });
       });
+    },
+    // 取得轉盤優惠碼
+    getTurntableCoupon(couponCode) {
+      this.couponCode = couponCode;
+      this.addCouponCode();
     },
     // 加入優惠碼
     addCouponCode() {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/coupon`;
       const coupon = {
-        code: vm.coupon_code
+        code: vm.couponCode
       };
       this.$http.post(api, { data: coupon }).then(response => {
         if (response.data.success) {

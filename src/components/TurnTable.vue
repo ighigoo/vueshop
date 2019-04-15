@@ -13,14 +13,8 @@
           <div class="turntable__bg-block"></div>
         </div>
         <ul class="turntable__list" id="turntable_list">
-          <li class="turntable__coupon">
-            <span class="turntable__text">1</span>
-          </li>
-          <li class="turntable__coupon">
-            <span class="turntable__text">2</span>
-          </li>
-          <li class="turntable__coupon">
-            <span class="turntable__text">3</span>
+          <li class="turntable__coupon" v-for=" item in coupons" :key="item.code">
+            <span class="turntable__text">{{item.title}}</span>
           </li>
         </ul>
       </div>
@@ -37,6 +31,9 @@
  
 
 <script>
+// 優惠券列表api須驗證故前台不做動態讀入
+// 轉盤內不同優惠券數量的角度計算
+
 export default {
   data() {
     return {
@@ -81,7 +78,7 @@ export default {
         targetDeg: 3690,
         rotatNum: 10 // 旋轉圈數
       },
-
+      resultCoupon: {},
       isRunning: false
     };
   },
@@ -94,7 +91,6 @@ export default {
       // targetDeg += 360 * rotatNum 即總旋轉度數
       // 順時針旋轉
       vm.turnTable.targetDeg = randomDeg + vm.turnTable.rotatNum * 360;
-      // console.log(vm.turnTable.targetDeg % 360);
       // 更新轉盤資訊
       vm.updateTurntableStatus();
       vm.isRunning = true;
@@ -106,8 +102,14 @@ export default {
         vm.updateTurntableStatus();
         // 中獎優惠券
         vm.getResulrCoupon();
+        // 向父元素回傳優惠券
+        vm.emitResultCoupon();
         vm.isRunning = false;
       }, 2000);
+    },
+    // 向父元素回傳優惠券代碼
+    emitResultCoupon() {
+      this.$emit("getCoupon", this.resultCoupon.code);
     },
 
     //300 60, 60 180, 180 300 順
@@ -128,7 +130,7 @@ export default {
           return resultDeg <= item.degrees.from && resultDeg > item.degrees.to;
         }
       });
-      console.log(resultCoupon.title);
+      vm.resultCoupon = resultCoupon;
     },
 
     // 更新轉盤角度資訊
