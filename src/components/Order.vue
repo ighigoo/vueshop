@@ -288,6 +288,8 @@ export default {
             if (response.data.success) {
               console.log(response.data.message);
               this.getCart();
+              // 重新取得nav購物車資料
+              vm.$bus.$emit("cartNav:reflash");
               vm.isLoading = false;
             } else {
               console.log(response.data.message);

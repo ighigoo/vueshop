@@ -1,5 +1,6 @@
 <template>
   <div class="row">
+    <loading :active.sync="isLoading"></loading>
     <!-- 1 -->
     <div class="col-md-4 col-sm-9 mb-4 mx-auto mb-5 order-md-2 order-sm-1">
       <div class="rank">
@@ -117,7 +118,130 @@
 </template>
 
 <script>
-export default {};
+// TODO:
+// 1.訂單列表>1頁時 getOrderList() 內的迴圈是否正常運作
+// 2.如何判斷products & orderList 資料設定完成 後乎叫 countSaleNum()
+// 3.countSaleNum() 中 saleNumArry 計算加總使用reduce 在 只有一筆資料的情況會出現錯誤, 故用 for迴圈
+
+export default {
+  data() {
+    return {
+      products: [], // 產品列表
+      orderList: [], // 銷售列表
+      isLoading: false,
+      // 判斷資料是否已經取得
+      settingStatus: {
+        products: false,
+        orderList: false
+      }
+    };
+  },
+  methods: {
+    // 取得產品列表
+    getProducts() {
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${
+        process.env.CUSTOMPATH
+      }/products/all`;
+      vm.isLoading = true;
+      this.$http.get(api).then(response => {
+        vm.isLoading = false;
+        vm.products = response.data.products;
+        vm.filterProductsActive();
+        vm.settingStatus.products = true;
+      });
+    },
+    // 過濾啟用產品列表
+    filterProductsActive() {
+      const vm = this;
+      vm.products = vm.products.filter(item => {
+        return item.is_enabled === 1;
+      });
+    },
+
+    // 取得訂單列表 - 僅取出產品部份
+    getOrderList() {
+      const vm = this;
+      let nowPage = 1;
+      let totalPages = 1;
+      for (nowPage = 1; nowPage <= totalPages; nowPage++) {
+        let api = `${process.env.APIPATH}/api/${
+          process.env.CUSTOMPATH
+        }/orders?page=${nowPage}`;
+        this.$http.get(api).then(response => {
+          // 訂單列表
+          let resultOrderList = response.data.orders;
+          // 列表中products物件 (裡面為各項商品)
+          let resultProductsList = [];
+          resultOrderList.forEach(item => {
+            resultProductsList.push(item.products);
+          });
+          // 將物件中的商品轉換為array 存至 orderList
+          resultProductsList.forEach(item => {
+            let productList = Object.values(item).map(p => {
+              let temp = {
+                productId: p.product_id,
+                qty: p.qty,
+                product: p.product
+              };
+              return temp;
+            });
+            vm.orderList = vm.orderList.concat(productList);
+          });
+          vm.settingStatus.orderList = true;
+          totalPages = response.data.pagination.total_pages;
+        });
+      }
+    },
+
+    // 計算商品銷售總量
+    countSaleNum() {
+      const vm = this;
+      vm.products.forEach((productItem, index) => {
+        // 將單一商品 從銷售列表過濾出來
+        let saleNumArry = vm.orderList.filter(orderItem => {
+          return productItem.id === orderItem.productId;
+        });
+        // 計算商品銷售
+        let saleTotalNum = 0;
+        for (let i = 0; i < saleNumArry.length; i++) {
+          saleTotalNum += saleNumArry[i].qty;
+        }
+
+        vm.$set(vm.products[index], "saleNum", saleTotalNum);
+      });
+    },
+
+    // 商品列表銷售排序
+    sortProducts() {
+      const vm = this;
+      vm.products.sort((a, b) => {
+        console.log(vm.products);
+        return b.saleNum - a.saleNum;
+      });
+    },
+
+    setSaleProducts() {
+      const vm = this;
+      let tempList = vm.products;
+    }
+  },
+  created() {
+    this.getProducts();
+    this.getOrderList();
+  },
+  watch: {
+    settingStatus: {
+      handler: function(val) {
+        if (val.products && val.orderList) {
+          this.countSaleNum();
+          this.sortProducts();
+        }
+      },
+      deep: true
+    }
+  }
+};
 </script>
 
 <style lang="scss">
