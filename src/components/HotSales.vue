@@ -1,117 +1,35 @@
 <template>
-  <div class="row">
-    <loading :active.sync="isLoading"></loading>
-    <!-- 1 -->
-    <div class="col-md-4 col-sm-9 mb-4 mx-auto mb-5 order-md-2 order-sm-1">
-      <div class="rank">
-        <div class="rank__box rank__box--first">
-          <i class="fas fa-crown rank__icon"></i>
-        </div>
-      </div>
-
-      <div class="card border-0 box-shadow text-center h-100">
-        <div class="rank"></div>
-        <h5 class="card-title card-title--slide">清涼果汁</h5>
-        <div class="card__img">
-          <img
-            class="card-img-top"
-            src="https://images.unsplash.com/photo-1546173159-315724a31696?w=1350"
-            alt="Card image cap"
-          >
+  <div>
+    <div class="row">
+      <!--  order-md-2 order-sm-1 -->
+      <div
+        class="col-md-4 col-sm-9 mb-4 mx-auto mb-5"
+        :class="[`order-md-${classRank.order.md[index]}`,
+      `order-sm-${classRank.order.sm[index]}`]"
+        v-for="(item,index) in products.slice(0,3)"
+        :key="index"
+      >
+        <div class="rank">
+          <!-- rank__box--first -->
+          <div class="rank__box" :class="`rank__box--${classRank.rank.box.mod[index]}`">
+            <i class="fas fa-crown rank__icon"></i>
+          </div>
         </div>
 
-        <!-- <div class="card-body">
-          <h4 class="card-title">金牌西裝</h4>
-          <p class="card-text">
-            This is a longer card with supporting text below as a natural lead-in to additional content. This content
-            is a little bit longer.
-          </p>
-          <p class="card-text">
-            This is a longer card with supporting text below as a natural lead-in to additional content. This content
-            is a little bit longer.
-          </p>
-        </div>-->
-        <div class="card-footer card-footer--slide">
-          <div class="btn btn-primary btn--slide mb-3">
-            <i class="fas fa-shopping-cart mr-1"></i>來一杯
+        <div class="card border-0 box-shadow text-center h-100">
+          <div class="rank"></div>
+          <h5 class="card-title card-title--slide">{{item.title}}</h5>
+          <div class="card__img">
+            <img class="card-img-top" :src="item.imageUrl" alt="Card image cap">
           </div>
-          <div class="btn btn-outline-secondary btn--slide">查看更多</div>
 
-          <!-- <div class="btn-group btn-group-sm">
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary">SM</a>
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary">M</a>
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary disabled">L</a>
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary">XL</a>
-          </div>-->
-        </div>
-      </div>
-    </div>
-    <!-- 2 -->
-    <div class="col-md-4 col-sm-9 mb-4 mx-auto mb-5 order-md-1 order-sm-2">
-      <div class="rank">
-        <div class="rank__box rank__box--second">
-          <i class="fas fa-crown rank__icon"></i>
-        </div>
-      </div>
-      <div class="card border-0 box-shadow text-center h-100">
-        <img
-          class="card-img-top"
-          src="https://images.unsplash.com/photo-1501841580093-a258b1937efe?=1350"
-          alt="Card image cap"
-        >
-        <!-- <div class="card-body">
-          <h4 class="card-title">金牌西裝</h4>
-          <p class="card-text">
-            This is a longer card with supporting text below as a natural lead-in to additional content. This content
-            is a little bit longer.
-          </p>
-          <p class="card-text">
-            This is a longer card with supporting text below as a natural lead-in to additional content. This content
-            is a little bit longer.
-          </p>
-        </div>-->
-        <!-- <div class="card-footer border-top-0 bg-white">
-          <div class="btn-group btn-group-sm">
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary">SM</a>
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary">M</a>
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary disabled">L</a>
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary">XL</a>
+          <div class="card-footer card-footer--slide">
+            <div class="btn btn-primary btn--slide mb-3">
+              <i class="fas fa-shopping-cart mr-1"></i>來一杯
+            </div>
+            <div class="btn btn-outline-secondary btn--slide">查看更多</div>
           </div>
-        </div>-->
-      </div>
-    </div>
-    <!--3 -->
-    <div class="col-md-4 col-sm-9 mb-4 mx-auto mb-5 order-md-3 order-sm-3">
-      <div class="rank">
-        <div class="rank__box rank__box--third">
-          <i class="fas fa-crown rank__icon"></i>
         </div>
-      </div>
-      <div class="card border-0 box-shadow text-center h-100">
-        <img
-          class="card-img-top"
-          src="https://images.unsplash.com/photo-1529892485617-25f63cd7b1e9?w=1350"
-          alt="Card image cap"
-        >
-        <!-- <div class="card-body">
-          <h4 class="card-title">金牌西裝</h4>
-          <p class="card-text">
-            This is a longer card with supporting text below as a natural lead-in to additional content. This content
-            is a little bit longer.
-          </p>
-          <p class="card-text">
-            This is a longer card with supporting text below as a natural lead-in to additional content. This content
-            is a little bit longer.
-          </p>
-        </div>-->
-        <!-- <div class="card-footer border-top-0 bg-white">
-          <div class="btn-group btn-group-sm">
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary">SM</a>
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary">M</a>
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary disabled">L</a>
-            <a href="shoppingCart-product.html" class="btn btn-outline-secondary">XL</a>
-          </div>
-        </div>-->
       </div>
     </div>
   </div>
@@ -133,6 +51,20 @@ export default {
       settingStatus: {
         products: false,
         orderList: false
+      },
+      classRank: {
+        order: {
+          // order-md-
+          md: ["2", "1", "3"],
+          // order-sm-
+          sm: ["1", "2", "3"]
+        },
+        rank: {
+          box: {
+            //  rank__box--
+            mod: ["first", "second", "third"]
+          }
+        }
       }
     };
   },
@@ -216,7 +148,6 @@ export default {
     sortProducts() {
       const vm = this;
       vm.products.sort((a, b) => {
-        console.log(vm.products);
         return b.saleNum - a.saleNum;
       });
     },
@@ -229,6 +160,7 @@ export default {
   created() {
     this.getProducts();
     this.getOrderList();
+    console.log(this.classRank.order.md);
   },
   watch: {
     settingStatus: {
