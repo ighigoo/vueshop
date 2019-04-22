@@ -102,12 +102,12 @@
           <div class="modal-body">
             <table class="table">
               <thead>
-                <th>商品代號</th>
+                <th>商品名稱</th>
                 <th class="text-right">數量</th>
               </thead>
               <tbody>
                 <tr v-for="item in tempOrder.products" :key="item.id">
-                  <td>{{ item.product_id }}</td>
+                  <td>{{ item.product.title }}</td>
                   <td class="text-right">{{ item.qty }}</td>
                 </tr>
               </tbody>

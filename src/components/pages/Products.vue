@@ -45,9 +45,9 @@
     <nav
       aria-label="Page navigation example"
       class="d-flex justify-content-center"
-      v-if="pagination.total_pages>=0"
+      v-if="pagination"
     >
-      <ul class="pagination">
+      <ul class="pagination" v-if="pagination.total_pages>=0">
         <!-- 前一頁 -->
         <li class="page-item" :class="{ 'disabled': !pagination.has_pre }">
           <a

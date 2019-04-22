@@ -18,16 +18,30 @@
 
         <div class="card border-0 box-shadow text-center h-100">
           <div class="rank"></div>
-          <h5 class="card-title card-title--slide">{{item.title}}</h5>
+          <div
+            class="card-title card-title--slide d-flex justify-content-center align-items-center w-auto h-10 px-3 py-1"
+          >
+            <h5 class="text-light font-weight-bold text-nowrap">{{item.title}}</h5>
+          </div>
           <div class="card__img">
             <img class="card-img-top" :src="item.imageUrl" alt="Card image cap">
           </div>
 
-          <div class="card-footer card-footer--slide">
-            <div class="btn btn-primary btn--slide mb-3">
-              <i class="fas fa-shopping-cart mr-1"></i>來一杯
-            </div>
-            <div class="btn btn-outline-secondary btn--slide">查看更多</div>
+          <div class="card-footer card-footer--slide btn-group w-100 h-20">
+            <router-link
+              tag="button"
+              class="btn btn-secondary btn--slide w-50"
+              to="/Shopping/Shopping_List"
+            >查看更多</router-link>
+            <button
+              type="button"
+              class="btn btn-primary-dark btn--slide d-block w-50"
+              @click="addtoCart(item.id)"
+            >
+              <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingCart"></i>
+              <i class="fas fa-shopping-cart mr-1" v-else></i>
+              來一杯
+            </button>
           </div>
         </div>
       </div>
@@ -47,6 +61,9 @@ export default {
       products: [], // 產品列表
       orderList: [], // 銷售列表
       isLoading: false,
+      status: {
+        loadingCart: "" // 加入購物車( 主畫面 )
+      },
       // 判斷資料是否已經取得
       settingStatus: {
         products: false,
@@ -125,7 +142,6 @@ export default {
         });
       }
     },
-
     // 計算商品銷售總量
     countSaleNum() {
       const vm = this;
@@ -152,15 +168,48 @@ export default {
       });
     },
 
-    setSaleProducts() {
+    // 加入購物車 id: 商品ID qty:數量 type:按鈕 0-主畫面 1-modal
+    addtoCart(id, qty = 1, type = 0) {
       const vm = this;
-      let tempList = vm.products;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      const apiDetail = `${process.env.DETAILAPIPATH}/carts`;
+
+      let detail = {
+        ice: 0,
+        sweet: 0,
+        size: 0,
+        add: []
+      };
+      vm.status.loadingCart = id;
+
+      const cart = {
+        product_id: id,
+        qty
+      };
+
+      this.$http.post(api, { data: cart }).then(response => {
+        if (response.data.success) {
+          vm.status.loadingCart = "";
+          // 加入成功訊息
+          const result = response.data.data;
+          // 客制資料上傳
+          const cartM = {
+            cart_id: result.id,
+            product_id: result.product_id,
+            qty: result.qty,
+            detail
+          };
+          this.$http.post(apiDetail, cartM).then(response => {
+            // 重新取得nav購物車資料
+            vm.$bus.$emit("cartNav:reflash");
+          });
+        }
+      });
     }
   },
   created() {
     this.getProducts();
     this.getOrderList();
-    console.log(this.classRank.order.md);
   },
   watch: {
     settingStatus: {
@@ -179,6 +228,11 @@ export default {
 <style lang="scss">
 .card {
   overflow: hidden;
+  //card-title
+  &-title {
+    letter-spacing: 5px;
+    background-color: rgba($dark, 0.2);
+  }
 
   //card-title--slide
   &-title--slide {
@@ -207,7 +261,7 @@ export default {
     z-index: 10;
   }
   &:hover &-footer--slide {
-    bottom: 40%;
+    bottom: 0;
   }
 
   &__img {

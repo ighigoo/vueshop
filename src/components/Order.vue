@@ -41,7 +41,9 @@
                 <th>單價</th>
               </thead>
               <tbody>
-                <tr></tr>
+                <tr v-if="cart.carts.length === 0">
+                  <td colspan="4" class="text-center">購物車尚無選購商品</td>
+                </tr>
                 <tr v-for="item in cart.carts" :key="item.id">
                   <td class="align-middle">
                     <button
@@ -80,7 +82,7 @@
             </table>
             <!-- 未使用過優惠券才顯示輸入欄位/轉盤 -->
             <!-- 轉盤 -->
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center" v-if="cart.carts.length > 0">
               <TurnTable @getCoupon="getTurntableCoupon" v-if="cart.final_total === cart.total"></TurnTable>
             </div>
             <!-- <div class="input-group mb-3 input-group-sm" v-if="cart.final_total === cart.total">
@@ -286,8 +288,8 @@ export default {
           vm.isLoading = true;
           this.$http.post(api, { data: order }).then(response => {
             if (response.data.success) {
-              console.log(response.data.message);
-              this.getCart();
+              vm.payOrder(response.data.orderId);
+              vm.getCart();
               // 重新取得nav購物車資料
               vm.$bus.$emit("cartNav:reflash");
               vm.isLoading = false;
@@ -297,6 +299,17 @@ export default {
           });
         } else {
           console.log("請填寫訂購人資訊");
+        }
+      });
+    },
+    payOrder(orderId) {
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${
+        process.env.CUSTOMPATH
+      }/pay/${orderId}`;
+      this.$http.post(api).then(response => {
+        if (response.data.success) {
+          console.log(response.data.message);
         }
       });
     }

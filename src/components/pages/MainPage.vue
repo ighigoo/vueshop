@@ -6,12 +6,14 @@
       <!-- 輪播 -->
       <Carousel></Carousel>
     </div>
-    <main role="main" class="container">
-      <div class="row">
-        <h2 class="col-12 text-center mb-5">暢銷飲品</h2>
-        <!-- 暢銷商品 -->
-        <HotSales></HotSales>
-        <!-- <router-view></router-view> -->
+    <main role="main" class="container-fluid bg-main">
+      <div class="container">
+        <div class="row">
+          <h2 class="col-12 text-center mb-5">暢銷飲品</h2>
+          <!-- 暢銷商品 -->
+          <HotSales></HotSales>
+          <!-- <router-view></router-view> -->
+        </div>
       </div>
     </main>
 
@@ -35,5 +37,19 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+// @import "~bootstrap/scss/functions";
+// @import "../../assets/helpers/variables";
+.bg-main {
+  background-image: linear-gradient(
+      to right bottom,
+      rgba($dark, 0.2),
+      rgba($light-blue, 0.2)
+    ),
+    url(https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350);
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom;
+}
 </style>

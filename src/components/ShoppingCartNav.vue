@@ -4,7 +4,6 @@
     <button class="btn btn-sm" data-toggle="dropdown" data-flip="false">
       <i class="fa fa-shopping-cart text-white fa-2x" aria-hidden="true"></i>
       <span class="badge badge-pill badge-danger">{{cartItemNum}}</span>
-      <span class="sr-only">unread messages</span>
     </button>
     <div class="dropdown-menu dropdown-menu-right p-3" style="min-width: 500px" data-offset="400">
       <h6>已選擇商品</h6>
@@ -58,7 +57,11 @@
           </tr>
         </tfoot>
       </table>
-      <router-link class="btn btn-primary w-100 text-center" to="/Shopping/Order">結帳去</router-link>
+      <router-link
+        tag="button"
+        class="btn btn-primary w-100 text-center text-light"
+        to="/Shopping/Order"
+      >結帳去</router-link>
 
       <!-- 未使用過優惠券才顯示輸入欄位 -->
       <!-- <div class="input-group mb-3 input-group-sm" v-if="cart.final_total === cart.total">
@@ -118,10 +121,11 @@ export default {
             let detailItem = detailCarts.find(item => {
               return item.cart_id === cartItem.id;
             });
-
             // 比對成功將detailId和detail{}加入cart.carts
-            this.$set(this.cart.carts[index], "detailId", detailItem.id);
-            this.$set(this.cart.carts[index], "detail", detailItem.detail);
+            if (detailItem) {
+              this.$set(this.cart.carts[index], "detailId", detailItem.id);
+              this.$set(this.cart.carts[index], "detail", detailItem.detail);
+            }
             vm.isLoading = false;
           });
         });
@@ -194,10 +198,10 @@ $(function() {
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .btn .badge {
   position: relative;
-  top: -15px;
+  top: -16px;
   right: 10px;
 }
 .font-detail {

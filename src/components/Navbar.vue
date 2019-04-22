@@ -1,12 +1,12 @@
 <template>
   <div>
     <nav
-      class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow navbar-expand-sm d-flex"
+      class="navbar navbar-dark fixed-top bg-primary-dark flex-md-nowrap p-0 shadow navbar-expand-sm d-flex"
     >
       <!-- <a class="navbar-brand px-3 mr-0" href="#">
         <i class="fas fa-glass-cheers mr-2"></i>好喝飲料鋪
       </a>-->
-      <router-link class="navbar-brand px-3 mr-0" to="/">
+      <router-link class="navbar-brand bg-primary-dark h-100 px-4 py-4 mr-0" to="/">
         <i class="fas fa-glass-cheers mr-2"></i>好喝飲料鋪
       </router-link>
       <ShoppingCartNav class="ml-auto order-sm-1"></ShoppingCartNav>
@@ -35,7 +35,8 @@
           </li>
           <li class="nav-item text-nowrap">
             <a class="nav-link" href="#" @click.prevent="logOut" v-if="isLogin">登出</a>
-            <a class="nav-link" href="#" v-else>登入</a>
+            <!-- <a class="nav-link" href="#" v-else>登入</a> -->
+            <router-link class="nav-link" to="/admin/login" v-else>登入</router-link>
           </li>
         </ul>
       </div>
@@ -93,4 +94,7 @@ export default {
 </script>
 
 <style>
+.navbar-brand {
+  box-shadow: none;
+}
 </style>
