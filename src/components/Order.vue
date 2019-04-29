@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="container main-contant py-5">
-      <h1 class="text-center mb-3 text-secondary">結帳</h1>
+    <div class="container bg-order p-5">
+      <h1 class="text-center text-primary font-weight-bold mb-3">結帳</h1>
       <!-- 進度 -->
       <section class="form-row align-items-center text-center">
         <div class="col">
@@ -9,14 +9,14 @@
         </div>
 
         <div class="col">
-          <div class="alert alert-secondary alert-rounded mb-0" role="alert">完成</div>
+          <div class="alert alert-transparent alert-rounded mb-0" role="alert">完成</div>
         </div>
       </section>
       <!-- 購物車 -->
       <section class="row justify-content-center mt-5">
         <div class="col-md-8">
           <!-- 總金額 -->
-          <div class="card">
+          <div class="card bg-primary-bg">
             <div class="card-header" id="headingOne">
               <h6 class="mb-0 d-flex align-items-center">
                 <a data-toggle="collapse" href="#collapseOne">
@@ -32,8 +32,8 @@
             </div>
           </div>
           <!-- 購物車內容 -->
-          <div id="collapseOne" class="collapse mt-3">
-            <table class="table">
+          <div id="collapseOne" class="collapse">
+            <table class="table bg-primary-bg">
               <thead>
                 <th></th>
                 <th>品名</th>
@@ -80,11 +80,7 @@
                 </tr>
               </tfoot>
             </table>
-            <!-- 未使用過優惠券才顯示輸入欄位/轉盤 -->
-            <!-- 轉盤 -->
-            <div class="d-flex justify-content-center" v-if="cart.carts.length > 0">
-              <TurnTable @getCoupon="getTurntableCoupon" v-if="cart.final_total === cart.total"></TurnTable>
-            </div>
+
             <!-- <div class="input-group mb-3 input-group-sm" v-if="cart.final_total === cart.total">
               <input
                 type="text"
@@ -102,7 +98,10 @@
               </div>
             </div>-->
           </div>
-          <h5 class="py-3 mt-5 mb-2 text-center bg-light">訂購人資訊</h5>
+          <h5
+            class="py-3 mt-3 mb-3 text-center text-primary bg-primary-bg"
+            style="border-radius: 0.25rem;"
+          >訂購人資訊</h5>
           <!-- 訂購表單 -->
           <form id="needs-validation" novalidate @submit.prevent="CreateOrder">
             <!-- 姓名 -->
@@ -167,8 +166,8 @@
               </div>
             </div>
             <div class="text-center mt-3">
-              <router-link class="btn btn-secondary" to="/Shopping/Shopping_List">繼續選購</router-link>
-              <button type="submit" class="btn btn-primary">確認付款</button>
+              <router-link class="btn btn-secondary mr-3" to="/Shopping/Shopping_List">繼續選購</router-link>
+              <button type="submit" class="btn btn-primary">送出訂單</button>
             </div>
           </form>
         </div>
@@ -200,7 +199,6 @@ export default {
       },
 
       loadingItem: "",
-      couponCode: "",
       detailSetting: {
         ice: ["正常冰", "少冰", "去冰"],
         sweet: ["正常糖", "少糖", "無糖"],
@@ -256,26 +254,7 @@ export default {
         });
       });
     },
-    // 取得轉盤優惠碼
-    getTurntableCoupon(couponCode) {
-      this.couponCode = couponCode;
-      this.addCouponCode();
-    },
-    // 加入優惠碼
-    addCouponCode() {
-      const vm = this;
-      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/coupon`;
-      const coupon = {
-        code: vm.couponCode
-      };
-      this.$http.post(api, { data: coupon }).then(response => {
-        if (response.data.success) {
-          this.getCart();
-        } else {
-          console.log(response.data.message);
-        }
-      });
-    },
+
     // 建立訂單
     CreateOrder() {
       const vm = this;
@@ -316,12 +295,38 @@ export default {
   },
   created() {
     this.getCart();
+
+    // vm.$bus.$emit("cartOrder:reflash")
+    this.$bus.$on("cartOrder:reflash", () => {
+      vm.getCart();
+    });
   }
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+.bg-order {
+  background-color: rgba($gray, 0.6);
+  padding: 5px;
+}
+
+.alert-transparent {
+  color: #797b7c;
+  background-color: transparent;
+  border-color: transparent;
+}
+
 .font-detail {
   font-size: 0.5rem;
+}
+
+.icon {
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 8px 16px 0px;
+  position: fixed;
+  top: 30vh;
+  right: 30rem;
 }
 </style>

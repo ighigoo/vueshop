@@ -52,4 +52,8 @@ export default {
   background-size: cover;
   background-position: bottom;
 }
+
+main {
+  min-height: calc(100vh - (72px + 106px));
+}
 </style>

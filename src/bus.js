@@ -15,7 +15,9 @@ Vue.prototype.$bus = new Vue();
 // vm.$bus.$emit("cartNav:reflash")
 // 重新取得購物車資料
 
-
+// Order
+// vm.$bus.$emit("cartOrder:reflash")
+// 重新取得購物車資料(Order頁面)
 
 
 

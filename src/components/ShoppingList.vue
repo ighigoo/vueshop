@@ -2,7 +2,7 @@
   <div>
     <loading :active.sync="isLoading"></loading>
 
-    <div class="row pt-4">
+    <div class="row">
       <div class="col-md-3">
         <!-- 左側選單 (List group) -->
         <div class="list-group sticky-top sticky-top--fixNav">
@@ -19,32 +19,6 @@
             <i class="fa mr-2" :class="item.iconClass" aria-hidden="true"></i>
             {{item.typeName}}
           </a>
-
-          <!-- <a
-            class="list-group-item list-group-item-action active"
-            data-toggle="list"
-            id="#list-all"
-            href="#"
-          >
-            <i class="fa fa-glass-cheers mr-2" aria-hidden="true"></i>全部
-          </a>
-          <a
-            class="list-group-item list-group-item-action"
-            data-toggle="list"
-            id="list-juice"
-            href="#list-gift"
-          >
-            <i class="fas fa-cocktail mr-2" aria-hidden="true"></i>果汁
-          </a>
-          <a href="#" class="list-group-item list-group-item-action" id="list-tea">
-            <i class="fa fa-leaf mr-2" aria-hidden="true"></i>茶
-          </a>
-          <a href="#" class="list-group-item list-group-item-action" id="list-coffee">
-            <i class="fas fa-mug-hot mr-2" aria-hidden="true"></i>咖啡
-          </a>
-          <a href="#" class="list-group-item list-group-item-action" id="list-bubble">
-            <i class="fa fa-wine-bottle mr-2" aria-hidden="true"></i>氣泡
-          </a>-->
         </div>
       </div>
       <div class="col-md-9">
@@ -52,33 +26,39 @@
           <!-- 卡片 -->
           <div class="col-md-4 mb-4" v-for="item in getComputeProducts" :key="item.id">
             <div class="card border-0 shadow-sm" v-if="item.is_enabled==1">
-              <div
-                style="height: 350px; background-size: cover; background-position: center"
-                :style="{backgroundImage:`url(${item.imageUrl})`}"
-              ></div>
-              <div class="card-body">
-                <span class="badge badge-secondary float-right ml-2">{{item.category}}</span>
-                <h5 class="card-title">
-                  <a href="#" class="text-dark">{{item.title}}</a>
+              <!-- title -->
+              <div class="card-title bg-primary mb-0 px-3 py-2">
+                <span
+                  class="badge badge-primary-dark text-gray float-right p-1 mt-1"
+                >{{item.category}}</span>
+                <h5 class="font-weight-bold">
+                  <a href="#" class="text-gray">{{item.title}}</a>
                 </h5>
-                <p class="card-text">內容</p>
+              </div>
+              <!-- img -->
+              <div class="card-body bg-img px-1 py-0">
+                <div class="card-img" :style="{backgroundImage:`url(${item.imageUrl})`}"></div>
+              </div>
+              <!-- price -->
+              <div class="card-body bg-light">
+                <!-- <p class="card-text">內容</p> -->
                 <div class="d-flex justify-content-between align-items-baseline">
                   <!-- 僅有原價 -->
-                  <div class="h5" v-if="!item.price ">{{item.origin_price | currency }} 元</div>
+                  <div class="h5" v-if="!item.price ">{{item.origin_price | currency }}</div>
                   <!-- 僅有原價+優惠價 且 原價>優惠價(正確資料)-->
                   <del
                     class="h6"
                     v-if="item.price && item.origin_price > item.price"
-                  >原價 {{item.origin_price | currency }} 元</del>
+                  >原價 {{item.origin_price | currency }}</del>
                   <div
                     class="h5"
                     v-if="item.price && item.origin_price > item.price"
-                  >現在只要 {{item.price | currency }} 元</div>
+                  >現在只要 {{item.price | currency }}</div>
                   <!-- 錯誤資料須從admin驗證-->
-                  <div class="h5" v-else>{{item.origin_price | currency }} 元</div>
+                  <div class="h5" v-else>{{item.origin_price | currency }}</div>
                 </div>
               </div>
-              <div class="card-footer d-flex">
+              <div class="card-footer bg-primary-bg d-flex">
                 <button
                   type="button"
                   class="btn btn-outline-secondary btn-sm"
@@ -89,7 +69,7 @@
                 </button>
                 <button
                   type="button"
-                  class="btn btn-outline-danger btn-sm ml-auto"
+                  class="btn btn-outline-success btn-sm ml-auto"
                   @click="addtoCart(item.id)"
                 >
                   <i class="fas fa-spinner fa-spin" v-if="item.id === status.loadingCart"></i>
@@ -117,92 +97,107 @@
     >
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">{{ product.title }}</h5>
+          <!-- header -->
+          <div class="modal-header bg-primary-dark">
+            <h5 class="modal-title text-light" id="exampleModalLabel">{{ product.title }}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
-          <div class="modal-body">
-            <img :src="product.imageUrl" class="img-fluid" alt>
-            <blockquote class="blockquote mt-3">
-              <p class="mb-0">{{ product.content }}</p>
-              <footer class="blockquote-footer text-right">{{ product.description }}</footer>
-            </blockquote>
-            <div class="d-flex justify-content-between align-items-baseline">
-              <div class="h4" v-if="!product.price">{{ product.origin_price }} 元</div>
-              <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
-              <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
+          <div class="modal-body bg-light p-0">
+            <!-- img -->
+            <div class="d-flex bg-primary-bg pb-1">
+              <img :src="product.imageUrl" class="img-fluid mx-auto" alt>
             </div>
-            <div class="d-flex justify-content-between my-1">
-              <div class="btn-group" role="group" aria-label="iceBtn">
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  :class="{active: productMod.iceBtn===0}"
-                  @click="productMod.iceBtn=0"
-                >正常</button>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  :class="{active: productMod.iceBtn===1}"
-                  @click="productMod.iceBtn=1"
-                >少冰</button>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  :class="{active: productMod.iceBtn===2}"
-                  @click="productMod.iceBtn=2"
-                >去冰</button>
+            <div class>
+              <!-- description -->
+
+              <blockquote class="blockquote mx-3 mt-3">
+                <p class="mb-0">{{ product.content }}</p>
+                <footer class="blockquote-footer text-right">{{ product.description }}</footer>
+              </blockquote>
+              <!-- price -->
+              <div class="d-flex justify-content-between align-items-baseline mx-3">
+                <div class="h4" v-if="!product.price">{{ product.origin_price }} 元</div>
+                <del class="h6" v-if="product.price">原價 {{ product.origin_price }} 元</del>
+                <div class="h4" v-if="product.price">現在只要 {{ product.price }} 元</div>
               </div>
-              <div class="btn-group" role="group" aria-label="sweetBtn">
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  :class="{active: productMod.sweetBtn===0}"
-                  @click="productMod.sweetBtn=0"
-                >正常</button>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  :class="{active: productMod.sweetBtn===1}"
-                  @click="productMod.sweetBtn=1"
-                >少糖</button>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  :class="{active: productMod.sweetBtn===2}"
-                  @click="productMod.sweetBtn=2"
-                >無糖</button>
+              <!-- detail -->
+              <div class="d-flex justify-content-between mx-3 my-1">
+                <div class="btn-group" role="group" aria-label="iceBtn">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary-dark"
+                    :class="{active: productMod.iceBtn===0}"
+                    @click="productMod.iceBtn=0"
+                  >正常</button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary-dark"
+                    :class="{active: productMod.iceBtn===1}"
+                    @click="productMod.iceBtn=1"
+                  >少冰</button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary-dark"
+                    :class="{active: productMod.iceBtn===2}"
+                    @click="productMod.iceBtn=2"
+                  >去冰</button>
+                </div>
+                <div class="btn-group" role="group" aria-label="sweetBtn">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary-dark"
+                    :class="{active: productMod.sweetBtn===0}"
+                    @click="productMod.sweetBtn=0"
+                  >正常</button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary-dark"
+                    :class="{active: productMod.sweetBtn===1}"
+                    @click="productMod.sweetBtn=1"
+                  >少糖</button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary-dark"
+                    :class="{active: productMod.sweetBtn===2}"
+                    @click="productMod.sweetBtn=2"
+                  >無糖</button>
+                </div>
+                <div class="btn-group" role="group" aria-label="sizeBtn">
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary-dark"
+                    :class="{active: productMod.sizeBtn===0}"
+                    @click="productMod.sizeBtn=0"
+                  >M</button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary-dark"
+                    :class="{active: productMod.sizeBtn===1}"
+                    @click="productMod.sizeBtn=1"
+                  >L</button>
+                </div>
               </div>
-              <div class="btn-group" role="group" aria-label="sizeBtn">
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  :class="{active: productMod.sizeBtn===0}"
-                  @click="productMod.sizeBtn=0"
-                >M</button>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary"
-                  :class="{active: productMod.sizeBtn===1}"
-                  @click="productMod.sizeBtn=1"
-                >L</button>
-              </div>
+              <select
+                name
+                class="form-control w-93 mx-3 my-3"
+                v-model="product.num"
+                v-if="product.id"
+              >
+                <!-- <option value disabled selected hidden>請選擇數量</option> -->
+                <option v-for="(num) in 10" :value="num" :key="num">選購 {{num}} {{product.unit}}</option>
+              </select>
             </div>
-            <select name class="form-control mt-3" v-model="product.num" v-if="product.id">
-              <!-- <option value disabled selected hidden>請選擇數量</option> -->
-              <option v-for="(num) in 10" :value="num" :key="num">選購 {{num}} {{product.unit}}</option>
-            </select>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer bg-primary-light">
             <div class="text-muted text-nowrap mr-3">
               小計
               <strong>{{ product.num * product.price }}</strong> 元
             </div>
             <button
               type="button"
-              class="btn btn-primary"
+              class="btn btn-primary-dark text-light"
               @click="addtoCart(product.id, product.num, 1)"
             >
               <i class="fas fa-spinner fa-spin" v-if="product.id === status.loadingCartModal"></i>
@@ -377,8 +372,53 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.w-93 {
+  width: 93%;
+}
+
 .sticky-top--fixNav {
   top: 6rem;
+}
+
+.card {
+  box-shadow: 0 0.5rem 1rem rgba($dark, 0.2) !important;
+}
+
+.card-title {
+  border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
+  // clip-path: polygon(
+  //   50% 0%,
+  //   100% 0,
+  //   100% 100%,
+  //   calc(100% - 0.25rem) 95%,
+  //   0.25rem 95%,
+  //   0 100%,
+  //   0 0
+  // );
+  z-index: 1;
+  // transform: translateY(10px);
+}
+
+.card-footer {
+  border-top-color: rgba($primary, 0.2);
+}
+.card-img {
+  height: 350px;
+  background-size: cover;
+  background-position: center;
+  transform: translateY(-5px);
+  z-index: -1;
+}
+.bg-img {
+  background-image: linear-gradient(to bottom, $primary-bg, $light);
+}
+
+.img-fluid {
+  width: auto;
+  max-height: 50vh;
+}
+.modal-header {
+  border: 0;
 }
 </style>
