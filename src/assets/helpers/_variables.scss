@@ -87,6 +87,7 @@ $success-light: lighten($green,30%)!default;
 $info:          $cyan !default;
 $warning:       $yellow !default;
 $danger:        $red !default;
+$danger-light: lighten($red,30%)!default;
 $light:         $gray-100 !default;
 $gray:         $gray-200 !default;
 $dark:          $gray-800 !default;

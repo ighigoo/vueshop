@@ -167,7 +167,7 @@
             </div>
             <div class="text-center mt-3">
               <router-link class="btn btn-secondary mr-3" to="/Shopping/Shopping_List">繼續選購</router-link>
-              <button type="submit" class="btn btn-primary">送出訂單</button>
+              <button type="submit" class="btn btn-primary text-light">送出訂單</button>
             </div>
           </form>
         </div>
@@ -230,6 +230,8 @@ export default {
             this.$set(this.cart.carts[index], "detail", detailItem.detail);
             vm.isLoading = false;
           });
+          //確認是否使用過優惠券
+          vm.checkDiscount();
         });
       });
     },
@@ -291,13 +293,26 @@ export default {
           console.log(response.data.message);
         }
       });
+    },
+    //確認是否使用過優惠券，並向父層回傳
+    checkDiscount() {
+      const vm = this;
+      let isDiscount = false;
+      if (vm.cart) {
+        if (vm.cart.carts.length > 0 && vm.cart.final_total === vm.cart.total) {
+          isDiscount = true;
+        }
+      }
+      vm.$bus.$emit("cartOrder:isDiscount", isDiscount);
+      console.log(isDiscount);
     }
   },
   created() {
-    this.getCart();
+    const vm = this;
+    vm.getCart();
 
     // vm.$bus.$emit("cartOrder:reflash")
-    this.$bus.$on("cartOrder:reflash", () => {
+    vm.$bus.$on("cartOrder:reflash", () => {
       vm.getCart();
     });
   }

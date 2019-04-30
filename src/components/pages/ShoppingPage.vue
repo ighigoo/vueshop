@@ -7,7 +7,7 @@
         <!-- 商品列表+客制功能欄  購買流程+ (確認結帳 付款成功) -->
         <router-view></router-view>
       </div>
-      <TurnTableIcon v-if="showIcon"></TurnTableIcon>
+      <TurnTableIcon v-if="isShowIcon"></TurnTableIcon>
     </div>
     <!-- footer -->
     <Footer></Footer>
@@ -27,22 +27,39 @@ export default {
   },
   data() {
     return {
-      showIcon: false
+      isShowIcon: false, // 是否顯示轉盤
+      isDiscount: false, // 是否使用過優惠券
+      isOrderPage: false // 是否為Order頁面
     };
   },
   methods: {
+    //轉盤顯示條件: 1.Order頁面 2.未使用過優惠券
     checkRoute() {
       const vm = this;
       if (vm.$route.name === "Order") {
-        vm.showIcon = true;
+        vm.isOrderPage = true;
       } else {
-        vm.showIcon = false;
+        vm.isOrderPage = false;
+      }
+      vm.showIcon();
+    },
+    showIcon() {
+      const vm = this;
+      if (vm.isDiscount && vm.isOrderPage) {
+        vm.isShowIcon = true;
+      } else {
+        vm.isShowIcon = false;
       }
     }
   },
   created() {
     const vm = this;
     vm.checkRoute();
+
+    vm.$bus.$on("cartOrder:isDiscount", isDiscount => {
+      vm.isDiscount = isDiscount;
+      vm.showIcon();
+    });
   },
   watch: {
     $route(to, from) {

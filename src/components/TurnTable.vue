@@ -195,7 +195,7 @@ $tempDeg: 50deg;
   margin: 50px;
   width: 20rem;
   height: 20rem;
-  border: 7px solid $blue;
+  border: 7px solid $primary-dark;
   border-radius: 50%;
   box-shadow: 0 0 20px #b2a98d;
 
@@ -258,17 +258,17 @@ $tempDeg: 50deg;
     transform-origin: bottom;
     overflow: hidden;
     &:nth-child(1) {
-      background-color: green;
+      background-color: $primary-light;
       transform: rotate(-45deg);
       z-index: 1;
     }
     &:nth-child(2) {
-      background-color: blue;
+      background-color: $success-light;
       transform: rotate(120deg);
       z-index: 1;
     }
     &:nth-child(3) {
-      background-color: yellow;
+      background-color: $danger-light;
       transform: rotate(240deg);
       z-index: 1;
     }
@@ -281,7 +281,7 @@ $tempDeg: 50deg;
     right: 0;
     width: 100%;
     height: 100%;
-    background: green;
+    background: $primary-light;
     transform-origin: bottom;
   }
   &__bg-block:before {
