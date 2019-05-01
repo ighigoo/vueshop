@@ -48,7 +48,7 @@ export default {
             vm.messages.splice(i, 1);
           }
         });
-      }, 5000);
+      }, 3000);
     }
   },
   created() {
@@ -69,8 +69,13 @@ export default {
 .message-alert {
   position: fixed;
   max-width: 50%;
-  top: 56px;
+  top: 7rem;
   right: 20px;
   z-index: 1100;
+}
+
+/* 修正關閉符號下飄 */
+.alert-dismissible .close {
+  padding: 0.5rem 1.25rem;
 }
 </style>

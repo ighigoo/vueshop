@@ -213,6 +213,7 @@
 
 <script>
 import $ from "jquery";
+
 export default {
   data() {
     return {
@@ -331,8 +332,15 @@ export default {
             //關閉modal
             $("#productModal").modal("hide");
           }
-          // 加入成功訊息
           const result = response.data.data;
+
+          // 加入成功訊息
+          vm.$bus.$emit(
+            "message:push",
+            `${result.product.title}成功加入購物車`,
+            "success"
+          );
+
           // 客制資料上傳
           const cartM = {
             cart_id: result.id,
@@ -343,7 +351,7 @@ export default {
           this.$http.post(apiDetail, cartM).then(response => {
             // 重新取得nav購物車資料
             vm.$bus.$emit("cartNav:reflash");
-            vm.getCart();
+            // vm.getCart();
           });
         }
       });
@@ -369,7 +377,6 @@ export default {
   },
   created() {
     this.getProducts();
-    //this.getCart();
   }
 };
 </script>
@@ -389,17 +396,7 @@ export default {
 
 .card-title {
   border-radius: calc(0.25rem - 1px) calc(0.25rem - 1px) 0 0;
-  // clip-path: polygon(
-  //   50% 0%,
-  //   100% 0,
-  //   100% 100%,
-  //   calc(100% - 0.25rem) 95%,
-  //   0.25rem 95%,
-  //   0 100%,
-  //   0 0
-  // );
   z-index: 1;
-  // transform: translateY(10px);
 }
 
 .card-footer {

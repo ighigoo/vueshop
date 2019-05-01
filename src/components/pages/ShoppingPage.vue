@@ -2,6 +2,8 @@
   <div>
     <!-- navbar -->
     <Navbar></Navbar>
+    <Alert></Alert>
+
     <div class="container-fluid main bg-main py-5">
       <div class="container">
         <!-- 商品列表+客制功能欄  購買流程+ (確認結帳 付款成功) -->
@@ -18,12 +20,14 @@
 import Navbar from "../Navbar";
 import Footer from "../Footer";
 import TurnTableIcon from "../TurnTableIcon";
+import Alert from "../AlertMessage";
 
 export default {
   components: {
     Navbar,
     Footer,
-    TurnTableIcon
+    TurnTableIcon,
+    Alert
   },
   data() {
     return {

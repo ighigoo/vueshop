@@ -2,6 +2,8 @@
   <div>
     <!-- navbar -->
     <Navbar></Navbar>
+    <Alert></Alert>
+
     <div class="container-fliud">
       <!-- 輪播 -->
       <Carousel></Carousel>
@@ -27,12 +29,15 @@ import Navbar from "../Navbar";
 import Carousel from "../Carousel";
 import HotSales from "../HotSales";
 import Footer from "../Footer";
+import Alert from "../AlertMessage";
+
 export default {
   components: {
     Navbar,
     Carousel,
     HotSales,
-    Footer
+    Footer,
+    Alert
   }
 };
 </script>

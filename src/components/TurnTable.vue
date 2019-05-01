@@ -109,7 +109,7 @@ export default {
     },
     // 向父元素回傳優惠券代碼
     emitResultCoupon() {
-      this.$emit("getCoupon", this.resultCoupon.code);
+      this.$emit("getCoupon", this.resultCoupon);
     },
 
     //300 60, 60 180, 180 300 順

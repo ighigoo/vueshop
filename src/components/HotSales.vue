@@ -192,6 +192,11 @@ export default {
           vm.status.loadingCart = "";
           // 加入成功訊息
           const result = response.data.data;
+          vm.$bus.$emit(
+            "message:push",
+            `${result.product.title}成功加入購物車`,
+            "success"
+          );
           // 客制資料上傳
           const cartM = {
             cart_id: result.id,

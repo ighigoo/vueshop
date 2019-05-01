@@ -51,14 +51,17 @@ export default {
   },
   data() {
     return {
-      couponCode: ""
+      coupon: {
+        title: "",
+        code: ""
+      }
     };
   },
 
   methods: {
     // 取得轉盤優惠碼
-    getTurntableCoupon(couponCode) {
-      this.couponCode = couponCode;
+    getTurntableCoupon(coupon) {
+      this.coupon = coupon;
       this.addCouponCode();
     },
     // 加入優惠碼
@@ -66,19 +69,27 @@ export default {
       const vm = this;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/coupon`;
       const coupon = {
-        code: vm.couponCode
+        code: vm.coupon.code
       };
 
+      // 1.5s 後關閉轉盤
       setTimeout(function() {
-        // 1.5s 後關閉轉盤
         $("#turntableModal").modal("hide");
-        //修正轉盤消失後灰色區域還留在畫面上的問題
-        $(".modal-backdrop").remove();
+        $(".modal-backdrop").remove(); //修正轉盤消失後灰色區域還留在畫面上的問題
+        $("body").removeClass("modal-open");
+        $("body").css("padding-right", "0");
       }, 1500);
+
       this.$http.post(api, { data: coupon }).then(response => {
         if (response.data.success) {
           //   this.getCart();
           vm.$bus.$emit("cartOrder:reflash");
+          vm.$bus.$emit("cartNav:reflash");
+          vm.$bus.$emit(
+            "message:push",
+            `已使用優惠券: ${vm.coupon.title}`,
+            "success"
+          );
         } else {
           console.log(response.data.message);
         }
