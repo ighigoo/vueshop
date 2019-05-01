@@ -208,7 +208,7 @@ $tempDeg: 50deg;
     height: 20rem;
     transform: rotate($nowDeg);
     &--turning {
-      animation: turnTable 2s cubic-bezier(0.08, 0.67, 0.61, 0.96);
+      animation: turnTable 2s cubic-bezier(0, 0.5, 0.31, 1.06);
     }
   }
   &__list,

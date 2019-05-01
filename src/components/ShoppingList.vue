@@ -328,6 +328,8 @@ export default {
             vm.status.loadingCart = "";
           } else {
             vm.status.loadingCartModal = "";
+            //關閉modal
+            $("#productModal").modal("hide");
           }
           // 加入成功訊息
           const result = response.data.data;

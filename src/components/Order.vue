@@ -304,7 +304,6 @@ export default {
         }
       }
       vm.$bus.$emit("cartOrder:isDiscount", isDiscount);
-      console.log(isDiscount);
     }
   },
   created() {

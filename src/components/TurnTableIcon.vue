@@ -68,6 +68,13 @@ export default {
       const coupon = {
         code: vm.couponCode
       };
+
+      setTimeout(function() {
+        // 1.5s 後關閉轉盤
+        $("#turntableModal").modal("hide");
+        //修正轉盤消失後灰色區域還留在畫面上的問題
+        $(".modal-backdrop").remove();
+      }, 1500);
       this.$http.post(api, { data: coupon }).then(response => {
         if (response.data.success) {
           //   this.getCart();
