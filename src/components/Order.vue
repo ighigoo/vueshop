@@ -5,15 +5,23 @@
       <!-- 進度 -->
       <section class="form-row align-items-center text-center">
         <div class="col">
-          <div class="alert alert-success alert-rounded mb-0" role="alert">輸入訂單資料</div>
+          <div
+            class="alert alert-rounded mb-0"
+            :class=" {'alert-success': !isOrder, 'alert-transparent': isOrder} "
+            role="alert"
+          >輸入訂單資料</div>
         </div>
 
         <div class="col">
-          <div class="alert alert-transparent alert-rounded mb-0" role="alert">完成</div>
+          <div
+            class="alert alert-rounded mb-0"
+            :class=" {'alert-success': isOrder, 'alert-transparent': !isOrder} "
+            role="alert"
+          >完成</div>
         </div>
       </section>
       <!-- 購物車 -->
-      <section class="row justify-content-center mt-5">
+      <section class="row justify-content-center mt-5" v-if="!isOrder">
         <div class="col-md-8">
           <!-- 總金額 -->
           <div class="card bg-primary-bg">
@@ -172,6 +180,14 @@
           </form>
         </div>
       </section>
+
+      <!-- 訂單完成畫面 -->
+      <section class="row justify-content-center mt-5" v-else>
+        <div class="w-50 py-3 mt-3 mb-3 text-center bg-primary-bg" style="border-radius: 0.25rem;">
+          <h3 class="text-primary mb-5">感謝您的訂購</h3>
+          <router-link class="btn btn-secondary" to="/Shopping/Shopping_List">繼續選購</router-link>
+        </div>
+      </section>
     </div>
   </div>
 </template>
@@ -203,7 +219,8 @@ export default {
         ice: ["正常冰", "少冰", "去冰"],
         sweet: ["正常糖", "少糖", "無糖"],
         size: ["M", "L"]
-      }
+      },
+      isOrder: false
     };
   },
   methods: {
@@ -260,6 +277,11 @@ export default {
     // 建立訂單
     CreateOrder() {
       const vm = this;
+
+      if (vm.cart.carts.length === 0) {
+        vm.$bus.$emit("message:push", "購物車尚無選購商品", "danger");
+        return;
+      }
       const order = vm.form;
       const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/order`;
       // 驗證
@@ -273,6 +295,7 @@ export default {
               vm.getCart();
               // 重新取得nav購物車資料
               vm.$bus.$emit("cartNav:reflash");
+              vm.isOrder = true;
               vm.isLoading = false;
             } else {
               console.log(response.data.message);
