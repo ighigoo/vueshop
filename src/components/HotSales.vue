@@ -271,7 +271,11 @@ export default {
 
   &__img {
     overflow: hidden;
+    height: 100%;
     img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
       transition: all 0.3s;
     }
   }
