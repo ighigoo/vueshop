@@ -61,6 +61,7 @@ export default {
       products: [], // 產品列表
       orderList: [], // 銷售列表
       isLoading: false,
+      orderTotalPages: 0, // 訂單列表總頁數
       status: {
         loadingCart: "" // 加入購物車( 主畫面 )
       },
@@ -111,37 +112,87 @@ export default {
     // 取得訂單列表 - 僅取出產品部份
     getOrderList() {
       const vm = this;
-      let nowPage = 1;
-      let totalPages = 1;
-      for (nowPage = 1; nowPage <= totalPages; nowPage++) {
+      let totalPages = vm.orderTotalPages;
+      let ajaxArry = [];
+      // 取得列表每頁的get 請求
+      for (let nowPage = 1; nowPage <= totalPages; nowPage++) {
         let api = `${process.env.APIPATH}/api/${
           process.env.CUSTOMPATH
         }/orders?page=${nowPage}`;
-        this.$http.get(api).then(response => {
-          // 訂單列表
-          let resultOrderList = response.data.orders;
-          // 列表中products物件 (裡面為各項商品)
-          let resultProductsList = [];
-          resultOrderList.forEach(item => {
-            resultProductsList.push(item.products);
-          });
-          // 將物件中的商品轉換為array 存至 orderList
-          resultProductsList.forEach(item => {
-            let productList = Object.values(item).map(p => {
-              let temp = {
-                productId: p.product_id,
-                qty: p.qty,
-                product: p.product
-              };
-              return temp;
+        let temp = vm.axios.get(api);
+        ajaxArry.push(temp);
+      }
+      // 等所有請求完成再進行資料處理
+      vm.axios.all(ajaxArry).then(
+        vm.axios.spread((...res) => {
+          const resList = Object.values(res).map(item => item.data);
+          resList.forEach(item => {
+            let resultOrderList = item.orders;
+            // 列表中products物件 (裡面為各項商品)
+            let resultProductsList = [];
+            resultOrderList.forEach(item => {
+              resultProductsList.push(item.products);
             });
-            vm.orderList = vm.orderList.concat(productList);
+            // 將物件中的商品轉換為array 存至 orderList
+            resultProductsList.forEach(item => {
+              let productList = Object.values(item).map(p => {
+                let temp = {
+                  productId: p.product_id,
+                  qty: p.qty,
+                  product: p.product
+                };
+                return temp;
+              });
+              vm.orderList = vm.orderList.concat(productList);
+            });
           });
           vm.settingStatus.orderList = true;
-          totalPages = response.data.pagination.total_pages;
-        });
-      }
+        })
+      );
+
+      // for (let nowPage = 1; nowPage <= totalPages; nowPage++) {
+      //   let api = `${process.env.APIPATH}/api/${
+      //     process.env.CUSTOMPATH
+      //   }/orders?page=${nowPage}`;
+      //   this.$http.get(api).then(response => {
+      //     // 訂單列表
+      //     let resultOrderList = response.data.orders;
+      //     // 列表中products物件 (裡面為各項商品)
+      //     let resultProductsList = [];
+      //     resultOrderList.forEach(item => {
+      //       resultProductsList.push(item.products);
+      //     });
+      //     // 將物件中的商品轉換為array 存至 orderList
+      //     resultProductsList.forEach(item => {
+      //       let productList = Object.values(item).map(p => {
+      //         let temp = {
+      //           productId: p.product_id,
+      //           qty: p.qty,
+      //           product: p.product
+      //         };
+      //         return temp;
+      //       });
+      //       vm.orderList = vm.orderList.concat(productList);
+      //     });
+      //   });
+      //   if (nowPage === totalPages) {
+      //     vm.settingStatus.orderList = true;
+      //   }
+      // }
     },
+
+    //取得訂單列比總頁數
+    getOrderTotalPages() {
+      const vm = this;
+      let api = `${process.env.APIPATH}/api/${
+        process.env.CUSTOMPATH
+      }/orders?page=1`;
+      this.$http.get(api).then(response => {
+        vm.orderTotalPages = response.data.pagination.total_pages;
+        return true;
+      });
+    },
+
     // 計算商品銷售總量
     countSaleNum() {
       const vm = this;
@@ -165,6 +216,11 @@ export default {
       const vm = this;
       vm.products.sort((a, b) => {
         return b.saleNum - a.saleNum;
+      });
+
+      // 測試用 顯示銷量
+      vm.products.forEach((item, index) => {
+        console.log(`${index}: ${item.title} -  ${item.saleNum} 杯`);
       });
     },
 
@@ -213,13 +269,20 @@ export default {
     }
   },
   created() {
-    this.getProducts();
-    this.getOrderList();
+    this.getOrderTotalPages();
   },
   watch: {
+    orderTotalPages: {
+      handler: function(val) {
+        this.getProducts();
+        this.getOrderList();
+      },
+      deep: true
+    },
     settingStatus: {
       handler: function(val) {
         if (val.products && val.orderList) {
+          // console.log(this.products, this.orderList);
           this.countSaleNum();
           this.sortProducts();
         }

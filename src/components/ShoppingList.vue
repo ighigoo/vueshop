@@ -275,7 +275,10 @@ export default {
       vm.isLoading = true;
       this.$http.get(api).then(response => {
         vm.isLoading = false;
-        vm.products = response.data.products;
+        vm.products = response.data.products.filter(item => {
+          return item.is_enabled === 1;
+        });
+
         vm.pagination = response.data.pagination;
       });
     },
