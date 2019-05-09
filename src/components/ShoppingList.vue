@@ -3,7 +3,7 @@
     <loading :active.sync="isLoading"></loading>
 
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-3 mb-5">
         <!-- 左側選單 (List group) -->
         <div class="list-group sticky-top sticky-top--fixNav">
           <a
@@ -24,7 +24,7 @@
       <div class="col-md-9">
         <div class="row">
           <!-- 卡片 -->
-          <div class="col-md-4 mb-4" v-for="item in getComputeProducts" :key="item.id">
+          <div class="col-md-6 col-lg-4 mb-4" v-for="item in getComputeProducts" :key="item.id">
             <div class="card border-0 shadow-sm" v-if="item.is_enabled==1">
               <!-- title -->
               <div class="card-title bg-primary mb-0 px-3 py-2">

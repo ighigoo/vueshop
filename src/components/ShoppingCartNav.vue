@@ -5,15 +5,15 @@
       <i class="fa fa-shopping-cart text-white fa-2x" aria-hidden="true"></i>
       <span class="badge badge-pill badge-danger">{{cartItemNum}}</span>
     </button>
-    <div class="dropdown-menu dropdown-menu-right p-3" style="min-width: 500px" data-offset="400">
+    <div class="dropdown-menu dropdown-menu-right p-3" data-offset="600">
       <h6>已選擇商品</h6>
       <!-- 購物車 -->
       <table class="table">
         <thead>
           <th></th>
           <th>品名</th>
-          <th>數量</th>
-          <th>單價</th>
+          <th class="text-nowrap">數量</th>
+          <th class="text-nowrap">單價</th>
         </thead>
         <tbody>
           <tr v-if="cart.carts.length === 0">
@@ -206,5 +206,15 @@ $(function() {
 }
 .font-detail {
   font-size: 0.5rem;
+}
+.dropdown-menu {
+  min-width: 500px;
+}
+@media screen and (max-width: 576px) {
+  .dropdown-menu {
+    min-width: 100vw;
+    width: 300px;
+    right: -3.5rem;
+  }
 }
 </style>

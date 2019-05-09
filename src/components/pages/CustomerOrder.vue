@@ -1,6 +1,6 @@
 <template>
   <div>
-    <loading :active.sync="isLoading"></loading>
+    <!-- <loading :active.sync="isLoading"></loading> -->
     <div class="row mt-4">
       <!-- 卡片 -->
       <div class="col-md-4 mb-4" v-for="item in products" :key="item.id">
@@ -58,7 +58,9 @@
     <div>
       <table class="table">
         <thead>
-          <th></th>
+          <th>
+            <button type="button" class="btn btn-danger btn-sm" @click="deleteCartAll">清空購物車</button>
+          </th>
           <th>品名</th>
           <th>數量</th>
           <th>單價</th>
@@ -451,7 +453,7 @@ export default {
       // 傳入參數增加detailId
       const apiDetail = `${process.env.DETAILAPIPATH}/carts/${detailId} `;
 
-      vm.isLoading = true;
+      // vm.isLoading = true;
       this.$http.delete(api).then(response => {
         //刪除detail
         this.$http.delete(apiDetail).then(response => {});
@@ -460,6 +462,37 @@ export default {
         // 重新取得nav購物車資料
         vm.$bus.$emit("cartNav:reflash");
         console.log(response.data);
+      });
+    },
+    // 清除購物車全部商品
+    deleteCartAll() {
+      const vm = this;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart`;
+      const apiDetail = `${process.env.DETAILAPIPATH}/carts`;
+      this.$http.get(api).then(response => {
+        vm.cart = response.data.data;
+
+        // get detail
+        this.$http.get(apiDetail).then(response => {
+          const detailCarts = response.data; // detail array
+          // vm.cart 跑foreach 和 detail 比對cart_id
+          vm.cart.carts.forEach((cartItem, index) => {
+            let detailItem = detailCarts.find(item => {
+              return item.cart_id === cartItem.id;
+            });
+
+            // 比對成功將detailId和detail{}加入cart.carts
+            // this.$set(this.cart.carts[index], "detailId", detailItem.id);
+            // this.$set(this.cart.carts[index], "detail", detailItem.detail);
+            if (detailItem) {
+              vm.deleteCart(cartItem.id, detailItem.id);
+            } else {
+              vm.deleteCart(cartItem.id, "");
+            }
+          });
+          vm.getCart();
+          vm.isLoading = false;
+        });
       });
     },
     // 加入優惠碼

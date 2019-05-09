@@ -2,7 +2,7 @@
   <div>
     <loading :active.sync="isLoading"></loading>
     <div class="text-right mt-4">
-      <a href="#" class="btn btn-primary" @click="openModal(true)">建立新商品</a>
+      <a href="#" class="btn btn-primary text-light" @click="openModal(true)">建立新商品</a>
     </div>
     <table class="table mt-4">
       <thead>

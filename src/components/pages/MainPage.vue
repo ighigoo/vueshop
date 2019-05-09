@@ -11,7 +11,9 @@
     <main role="main" class="container-fluid bg-main">
       <div class="container">
         <div class="row">
-          <h2 class="col-12 text-center mb-5">暢銷飲品</h2>
+          <div class="d-flex text-center mx-auto mb-5">
+            <h2 class="text-primary-dark text-background px-5 py-3">暢銷飲品</h2>
+          </div>
           <!-- 暢銷商品 -->
           <HotSales></HotSales>
           <!-- <router-view></router-view> -->
@@ -60,5 +62,14 @@ export default {
 
 main {
   min-height: calc(100vh - (72px + 106px));
+}
+
+.text-background {
+  background-color: rgba($light, 0.2);
+}
+@media screen and (max-width: 768px) {
+  .text-background {
+    background-color: rgba($light, 0.4);
+  }
 }
 </style>

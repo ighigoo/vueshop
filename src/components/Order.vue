@@ -241,10 +241,10 @@ export default {
             let detailItem = detailCarts.find(item => {
               return item.cart_id === cartItem.id;
             });
-
+            console.log(detailItem);
             // 比對成功將detailId和detail{}加入cart.carts
-            this.$set(this.cart.carts[index], "detailId", detailItem.id);
-            this.$set(this.cart.carts[index], "detail", detailItem.detail);
+            vm.$set(vm.cart.carts[index], "detailId", detailItem.id);
+            vm.$set(vm.cart.carts[index], "detail", detailItem.detail);
             vm.isLoading = false;
           });
           //確認是否使用過優惠券

@@ -21,13 +21,13 @@
         required
         v-model="user.password"
       >
-      <div class="checkbox mb-3">
+      <!-- <div class="checkbox mb-3">
         <label>
           <input type="checkbox" value="remember-me"> Remember me
         </label>
-      </div>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-      <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
+      </div>-->
+      <button class="btn btn-lg btn-primary text-light btn-block mt-3" type="submit">Sign in</button>
+      <p class="mt-3 mb-3 text-muted">&copy; 2019</p>
     </form>
   </div>
 </template>
@@ -48,10 +48,12 @@ export default {
       const api = `${process.env.APIPATH}/admin/signin`;
       let vm = this;
       this.$http.post(api, vm.user).then(response => {
-        console.log(response.data);
         if (response.data.success) {
           vm.$bus.$emit("checkLoginBus"); // 更新navbar狀態
           vm.$router.push("/admin");
+        } else {
+          // 錯誤訊息
+          vm.$bus.$emit("message:push", response.data.message, "danger");
         }
       });
     }

@@ -110,4 +110,34 @@ export default {
   right: 3rem;
   cursor: pointer;
 }
+@media screen and (max-width: 768px) {
+  .icon {
+    width: 6rem;
+    height: 6rem;
+    right: 1.5rem;
+    & i {
+      font-size: 2.5rem;
+    }
+
+    & h5 {
+      font-size: 0.8rem;
+    }
+  }
+}
+@media screen and (max-width: 576px) {
+  .icon {
+    width: 4rem;
+    height: 4rem;
+    right: 0.5rem;
+
+    & i {
+      font-size: 1.5rem;
+    }
+
+    & h5 {
+      font-size: 0.8rem;
+      display: none;
+    }
+  }
+}
 </style>

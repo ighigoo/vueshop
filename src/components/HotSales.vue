@@ -219,9 +219,9 @@ export default {
       });
 
       // 測試用 顯示銷量
-      vm.products.forEach((item, index) => {
-        console.log(`${index}: ${item.title} -  ${item.saleNum} 杯`);
-      });
+      // vm.products.forEach((item, index) => {
+      //   console.log(`${index}: ${item.title} -  ${item.saleNum} 杯`);
+      // });
     },
 
     // 加入購物車 id: 商品ID qty:數量 type:按鈕 0-主畫面 1-modal

@@ -30,13 +30,13 @@
           <li class="nav-item active">
             <router-link class="nav-link" to="/Shopping/Shopping_List">產品列表</router-link>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" href="#">訂單查詢</a>
-          </li>
+          </li>-->
           <li class="nav-item text-nowrap">
-            <a class="nav-link" href="#" @click.prevent="logOut" v-if="isLogin">登出</a>
+            <a class="nav-link" href="#" @click.prevent="logOut" v-if="isLogin">登出(後台)</a>
             <!-- <a class="nav-link" href="#" v-else>登入</a> -->
-            <router-link class="nav-link" to="/admin/login" v-else>登入</router-link>
+            <router-link class="nav-link" to="/admin/login" v-else>登入(後台)</router-link>
           </li>
         </ul>
       </div>

@@ -106,6 +106,7 @@ export default new Router({
           path: '/customer_order',
           name: 'CustomerOrder',
           component: CustomerOrder,
+          meta: { requiresAuth: true },
         },
 
       ]
