@@ -27,7 +27,7 @@
             <img class="card-img-top" :src="item.imageUrl" alt="Card image cap">
           </div>
 
-          <div class="card-footer card-footer--slide btn-group w-100 h-20">
+          <div class="card-footer card-footer--slide w-100 h-20">
             <router-link
               tag="button"
               class="btn btn-secondary btn--slide w-50"
@@ -293,7 +293,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped >
 .card {
   overflow: hidden;
   //card-title
@@ -318,18 +318,23 @@ export default {
 
   //card-footer--slide
   &-footer--slide {
-    padding: 0;
+    padding: 0 !important ;
     position: absolute;
-    bottom: -30%;
+    bottom: 0;
     left: 50%;
-    border: 0;
+    border: none;
     background-color: rgba(0, 0, 0, 0);
-    transform: translateX(-50%);
+    transform: translate(-50%, 100%);
     transition: all 0.3s;
     z-index: 10;
+    display: flex;
+    // opacity: 0;
   }
   &:hover &-footer--slide {
-    bottom: 0;
+    // bottom: 0;
+    transform: translate(-50%, 0%);
+    // display: flex;
+    // opacity: 1;
   }
 
   &__img {
