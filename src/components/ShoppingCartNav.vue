@@ -23,7 +23,7 @@
             <td class="align-middle">
               <button
                 type="button"
-                class="btn btn-outline-danger btn-sm"
+                class="btn btn-outline-danger btn-sm btn-delete"
                 @click="deleteCart(item.id,item.detailId)"
               >
                 <i class="fas fa-spinner fa-spin" v-if="item.id === loadingItem"></i>
@@ -32,10 +32,11 @@
             </td>
             <td class="align-middle">
               {{ item.product.title }}
-              ({{ detailSetting.size[item.detail.size] }})
               <span
-                class="h6 text-danger font-detail"
-              >
+                v-if="item.detail"
+              >({{ detailSetting.size[item.detail.size] }})</span>
+
+              <span class="h6 text-danger font-detail" v-if="item.detail">
                 {{ detailSetting.ice[item.detail.ice] }} ,
                 {{ detailSetting.sweet[item.detail.sweet] }}
               </span>
@@ -59,8 +60,9 @@
       </table>
       <router-link
         tag="button"
-        class="btn btn-primary w-100 text-center text-light"
+        class="btn btn-primary w-100 text-center text-light btn-pay"
         to="/Shopping/Order"
+        @click.native="clickPay"
       >結帳去</router-link>
 
       <!-- 未使用過優惠券才顯示輸入欄位 -->
@@ -134,9 +136,7 @@ export default {
     // 刪除購物車商品
     deleteCart(id, detailId) {
       const vm = this;
-      const api = `${process.env.APIPATH}/api/${
-        process.env.CUSTOMPATH
-      }/cart/${id}`;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`;
 
       // 傳入參數增加detailId
       const apiDetail = `${process.env.DETAILAPIPATH}/carts/${detailId} `;
@@ -150,10 +150,14 @@ export default {
           // 重新取得nav購物車資料
           // vm.$bus.$emit("cartNav:reflash");
 
-          console.log(response.data);
+          //console.log(response.data);
         });
       });
+    },
+    clickPay() {
+      $(".dropdown-menu").removeClass("show");
     }
+
     // 加入優惠碼
     // addCouponCode() {
     //   const vm = this;
@@ -192,8 +196,18 @@ export default {
 
 $(function() {
   // 避免點擊購物車dropdown關閉
-  $(".dropdown-menu").on("click", function(event) {
-    event.stopPropagation();
+  // $(".dropdown-menu").on("click", function(event) {
+  //   event.stopPropagation();
+  // });
+  $("body").on("click", ".dropdown-menu", function(e) {
+    $(this)
+      .parent()
+      .is(".show") && e.stopPropagation();
+  });
+  $(".dropdown-menu").on("click", ".btn-pay", function(e) {
+    $(this)
+      .parent()
+      .removeClass(".show") && e.stopPropagation();
   });
 });
 </script>

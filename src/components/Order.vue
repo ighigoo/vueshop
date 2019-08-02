@@ -64,9 +64,12 @@
                     </button>
                   </td>
                   <td class="align-middle">
-                    {{ item.product.title }} ({{ detailSetting.size[item.detail.size] }})
+                    {{ item.product.title }}
+                    <span
+                      v-if="item.detail"
+                    >({{ detailSetting.size[item.detail.size] }})</span>
                     <!-- <span>{{ detailSetting[item.detail.ice] }}</span> -->
-                    <span class="h6 text-danger font-detail">
+                    <span class="h6 text-danger font-detail" v-if="item.detail">
                       {{ detailSetting.ice[item.detail.ice] }} ,
                       {{ detailSetting.sweet[item.detail.sweet] }}
                     </span>
@@ -125,7 +128,7 @@
                   name="name"
                   v-model="form.user.name"
                   v-validate="'required'"
-                >
+                />
                 <span class="text-danger" v-if="errors.has('name')">請輸入姓名</span>
               </div>
               <!-- Email -->
@@ -140,7 +143,7 @@
                   name="email"
                   v-model="form.user.email"
                   v-validate="'required|email'"
-                >
+                />
                 <span class="text-danger" v-if="errors.has('email')">{{errors.first('email')}}</span>
               </div>
               <!-- 手機號碼 -->
@@ -155,7 +158,7 @@
                   name="tel"
                   v-model="form.user.tel"
                   v-validate="'required|digits:10'"
-                >
+                />
                 <span class="text-danger" v-if="errors.has('tel')">請輸入手機號碼</span>
               </div>
               <div class="form-group col-md-8 mx-auto">
@@ -169,7 +172,7 @@
                   name="address"
                   v-model="form.user.address"
                   v-validate="'required'"
-                >
+                />
                 <span class="text-danger" v-if="errors.has('address')">請輸入地址</span>
               </div>
             </div>
@@ -203,7 +206,7 @@ export default {
   },
   data() {
     return {
-      cart: {},
+      cart: { carts: [] },
       form: {
         user: {
           name: "",
@@ -241,7 +244,7 @@ export default {
             let detailItem = detailCarts.find(item => {
               return item.cart_id === cartItem.id;
             });
-            console.log(detailItem);
+            //console.log(detailItem);
             // 比對成功將detailId和detail{}加入cart.carts
             vm.$set(vm.cart.carts[index], "detailId", detailItem.id);
             vm.$set(vm.cart.carts[index], "detail", detailItem.detail);
@@ -255,9 +258,7 @@ export default {
     // 刪除購物車商品
     deleteCart(id, detailId) {
       const vm = this;
-      const api = `${process.env.APIPATH}/api/${
-        process.env.CUSTOMPATH
-      }/cart/${id}`;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`;
 
       // 傳入參數增加detailId
       const apiDetail = `${process.env.DETAILAPIPATH}/carts/${detailId} `;
@@ -308,9 +309,7 @@ export default {
     },
     payOrder(orderId) {
       const vm = this;
-      const api = `${process.env.APIPATH}/api/${
-        process.env.CUSTOMPATH
-      }/pay/${orderId}`;
+      const api = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/pay/${orderId}`;
       this.$http.post(api).then(response => {
         if (response.data.success) {
           console.log(response.data.message);
